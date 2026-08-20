@@ -1,0 +1,28 @@
+{% extends 'base.html' %}
+
+{% block title %}Account Activated | CrowdFund Egypt{% endblock %}
+
+{% block content %}
+<div class="container py-5">
+  <div class="row justify-content-center">
+    <div class="col-lg-6 col-md-8 text-center">
+      <div class="card border-0 shadow-lg rounded-4 p-4 p-md-5">
+        <div class="mb-4">
+          <span class="d-inline-flex align-items-center justify-content-center bg-success bg-opacity-10 text-success rounded-circle" style="width: 80px; height: 80px;">
+            <i class="fa-solid fa-circle-check display-5"></i>
+          </span>
+        </div>
+
+        <h3 class="fw-bold mb-2">Account Activated Successfully!</h3>
+        <p class="text-muted mb-4">
+          Welcome aboard, <strong>{{ user.first_name }}</strong>! Your email has been verified and your account is active.
+        </p>
+
+        <a href="{% url 'accounts:login' %}" class="btn btn-primary btn-lg rounded-pill px-5">
+          <i class="fa-solid fa-arrow-right-to-bracket me-2"></i> Log In Now
+        </a>
+      </div>
+    </div>
+  </div>
+</div>
+{% endblock %}

@@ -1,0 +1,18 @@
+{% extends 'base.html' %}
+
+{% block title %}500 - Server Error | CrowdFund Egypt{% endblock %}
+
+{% block content %}
+<div class="container py-5 text-center my-auto">
+  <div class="py-5">
+    <div class="display-1 fw-bold text-danger mb-3">500</div>
+    <h2 class="fw-bold mb-3">Internal Server Error</h2>
+    <p class="text-muted mx-auto mb-4" style="max-width: 500px;">
+      Something went wrong on our end. Please try again later or contact our support team.
+    </p>
+    <a href="{% url 'home' %}" class="btn btn-primary rounded-pill px-4">
+      <i class="fa-solid fa-house me-1"></i> Return Home
+    </a>
+  </div>
+</div>
+{% endblock %}

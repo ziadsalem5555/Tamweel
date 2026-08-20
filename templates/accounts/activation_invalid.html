@@ -1,0 +1,33 @@
+{% extends 'base.html' %}
+
+{% block title %}{{ error_title|default:'Activation Failed' }} | CrowdFund Egypt{% endblock %}
+
+{% block content %}
+<div class="container py-5">
+  <div class="row justify-content-center">
+    <div class="col-lg-6 col-md-8 text-center">
+      <div class="card border-0 shadow-lg rounded-4 p-4 p-md-5">
+        <div class="mb-4">
+          <span class="d-inline-flex align-items-center justify-content-center bg-danger bg-opacity-10 text-danger rounded-circle" style="width: 80px; height: 80px;">
+            <i class="fa-solid fa-circle-xmark display-5"></i>
+          </span>
+        </div>
+
+        <h3 class="fw-bold mb-2">{{ error_title|default:'Activation Failed' }}</h3>
+        <p class="text-muted mb-4">
+          {{ error_message|default:'The activation link is invalid, expired (links expire in 24 hours), or has already been used.' }}
+        </p>
+
+        <div class="d-flex justify-content-center gap-2">
+          <a href="{% url 'accounts:register' %}" class="btn btn-outline-primary rounded-pill px-4">
+            Register Again
+          </a>
+          <a href="{% url 'home' %}" class="btn btn-primary rounded-pill px-4">
+            Home
+          </a>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+{% endblock %}

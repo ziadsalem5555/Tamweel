@@ -1,0 +1,217 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block title %}CrowdFund Egypt | Fund Egyptian Innovation & Social Projects{% endblock %}
+
+{% block content %}
+<!-- Hero Section with Search -->
+<section class="hero-section text-center text-md-start">
+  <div class="container">
+    <div class="row align-items-center g-4">
+      <div class="col-lg-7">
+        <span class="badge bg-primary bg-opacity-25 text-white border border-primary px-3 py-2 rounded-pill mb-3">
+          <i class="fa-solid fa-flag me-1"></i> Crowdfunding in Egypt
+        </span>
+        <h1 class="hero-title mb-3">
+          Fund the Future of <br><span class="text-info">Egyptian Dreams</span> & Innovation.
+        </h1>
+        <p class="hero-subtitle mb-4">
+          Discover, support, and raise funds for groundbreaking tech, creative art, community aid, and entrepreneurial initiatives across Egypt.
+        </p>
+
+        <!-- Main Search Form -->
+        <form action="{% url 'projects:project_list' %}" method="GET" class="mb-4">
+          <div class="input-group input-group-lg bg-white rounded-pill p-1 shadow-lg" style="max-width: 540px;">
+            <span class="input-group-text bg-transparent border-0 ps-3">
+              <i class="fa-solid fa-magnifying-glass text-primary"></i>
+            </span>
+            <input type="text" name="q" class="form-control border-0 shadow-none" placeholder="Search campaigns by title or tag...">
+            <button class="btn btn-primary rounded-pill px-4" type="submit">
+              Search
+            </button>
+          </div>
+        </form>
+
+        <div class="d-flex flex-wrap gap-3">
+          <a href="{% url 'projects:project_list' %}" class="btn btn-light px-4 py-2 rounded-pill fw-semibold shadow-sm">
+            <i class="fa-solid fa-compass me-1"></i> Explore Campaigns
+          </a>
+          <a href="{% url 'projects:project_create' %}" class="btn btn-outline-light px-4 py-2 rounded-pill fw-semibold">
+            <i class="fa-solid fa-plus me-1"></i> Start Your Campaign
+          </a>
+        </div>
+      </div>
+
+      <div class="col-lg-5 d-none d-lg-block text-center">
+        <div class="p-4 rounded-4 shadow-lg" style="background: rgba(255, 255, 255, 0.05); backdrop-filter: blur(10px); border: 1px solid rgba(255, 255, 255, 0.15);">
+          <i class="fa-solid fa-hand-holding-heart display-1 text-info mb-3"></i>
+          <h4 class="text-white fw-bold">Together We Build Egypt</h4>
+          <p class="small text-light opacity-75 mb-0">
+            Over millions raised for Egyptian education, healthcare, technology, and community development.
+          </p>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<div class="container py-5">
+  <!-- 1. Top 5 Highest Rated Running Projects Slider -->
+  {% if top_rated_projects %}
+    <div class="mb-5">
+      <div class="d-flex justify-content-between align-items-center mb-4">
+        <div>
+          <span class="text-uppercase text-warning fw-bold small tracking-wider">
+            <i class="fa-solid fa-trophy me-1"></i> Community Favorites
+          </span>
+          <h2 class="fw-bold mb-0">Top Rated Running Campaigns</h2>
+        </div>
+        <a href="{% url 'projects:project_list' %}" class="btn btn-outline-primary btn-sm rounded-pill">
+          View All <i class="fa-solid fa-arrow-right ms-1"></i>
+        </a>
+      </div>
+
+      <div id="topRatedCarousel" class="carousel slide top-rated-slider" data-bs-ride="carousel">
+        <div class="carousel-indicators">
+          {% for p in top_rated_projects %}
+            <button type="button" data-bs-target="#topRatedCarousel" data-bs-slide-to="{{ forloop.counter0 }}" class="{% if forloop.first %}active{% endif %}" aria-current="{% if forloop.first %}true{% endif %}" aria-label="Slide {{ forloop.counter }}"></button>
+          {% endfor %}
+        </div>
+
+        <div class="carousel-inner">
+          {% for p in top_rated_projects %}
+            <div class="carousel-item {% if forloop.first %}active{% endif %}">
+              {% if p.cover_image %}
+                <img src="{{ p.cover_image }}" class="d-block w-100" alt="{{ p.title }}">
+              {% else %}
+                <div class="w-100 h-100 d-flex align-items-center justify-content-center bg-dark text-white">
+                  <i class="fa-solid fa-images display-1 opacity-25"></i>
+                </div>
+              {% endif %}
+              <div class="top-rated-caption">
+                <div class="d-flex align-items-center gap-2 mb-2">
+                  <span class="badge bg-warning text-dark px-3 py-1 rounded-pill fw-bold">
+                    <i class="fa-solid fa-star me-1"></i>{{ p.average_rating }} / 5.0 ({{ p.ratings_count }} reviews)
+                  </span>
+                  <span class="badge bg-primary px-3 py-1 rounded-pill">
+                    {{ p.category.name }}
+                  </span>
+                </div>
+                <h3 class="fw-bold mb-2">{{ p.title }}</h3>
+                <p class="d-none d-md-block text-light opacity-90 mb-3" style="max-width: 700px;">
+                  {{ p.details|truncatechars:160 }}
+                </p>
+                <div class="d-flex flex-wrap align-items-center gap-3">
+                  <div class="text-light small">
+                    <strong class="text-success fs-6">{{ p.total_donations|floatformat:0 }} EGP</strong> raised of {{ p.total_target|floatformat:0 }} EGP target
+                  </div>
+                  <a href="{% url 'projects:project_detail' pk=p.pk %}" class="btn btn-primary rounded-pill px-4">
+                    Donate Now <i class="fa-solid fa-heart ms-1"></i>
+                  </a>
+                </div>
+              </div>
+            </div>
+          {% endfor %}
+        </div>
+
+        <button class="carousel-control-prev" type="button" data-bs-target="#topRatedCarousel" data-bs-slide="prev">
+          <span class="carousel-control-prev-icon" aria-label="Previous"></span>
+        </button>
+        <button class="carousel-control-next" type="button" data-bs-target="#topRatedCarousel" data-bs-slide="next">
+          <span class="carousel-control-next-icon" aria-label="Next"></span>
+        </button>
+      </div>
+    </div>
+  {% endif %}
+
+  <!-- 2. Latest 5 Projects -->
+  <div class="mb-5">
+    <div class="d-flex justify-content-between align-items-center mb-4">
+      <div>
+        <span class="text-uppercase text-primary fw-bold small">
+          <i class="fa-solid fa-sparkles me-1"></i> Fresh Campaigns
+        </span>
+        <h2 class="fw-bold mb-0">Latest Projects</h2>
+      </div>
+      <a href="{% url 'projects:project_list' %}" class="btn btn-outline-secondary btn-sm rounded-pill">
+        See All Projects <i class="fa-solid fa-arrow-right ms-1"></i>
+      </a>
+    </div>
+
+    <div class="row row-cols-1 row-cols-md-2 row-cols-lg-3 g-4">
+      {% for project in latest_projects %}
+        <div class="col">
+          {% include 'includes/project_card.html' with project=project %}
+        </div>
+      {% empty %}
+        <div class="col-12 text-center py-5 text-muted">
+          <i class="fa-regular fa-folder-open fs-1 mb-2"></i>
+          <p>No active campaigns yet. Be the first to start one!</p>
+          <a href="{% url 'projects:project_create' %}" class="btn btn-primary rounded-pill">Create Campaign</a>
+        </div>
+      {% endfor %}
+    </div>
+  </div>
+
+  <!-- 3. Latest 5 Featured Projects (Admin Selected) -->
+  {% if featured_projects %}
+    <div class="mb-5">
+      <div class="d-flex justify-content-between align-items-center mb-4">
+        <div>
+          <span class="text-uppercase text-danger fw-bold small">
+            <i class="fa-solid fa-award me-1"></i> Staff Picks
+          </span>
+          <h2 class="fw-bold mb-0">Featured Projects</h2>
+        </div>
+      </div>
+
+      <div class="row row-cols-1 row-cols-md-2 row-cols-lg-3 g-4">
+        {% for project in featured_projects %}
+          <div class="col">
+            {% include 'includes/project_card.html' with project=project %}
+          </div>
+        {% endfor %}
+      </div>
+    </div>
+  {% endif %}
+
+  <!-- 4. Browse by Category -->
+  <div class="mb-5">
+    <div class="text-center mb-4">
+      <span class="text-uppercase text-primary fw-bold small">Explore Themes</span>
+      <h2 class="fw-bold">Browse by Category</h2>
+      <p class="text-muted">Find causes and projects that match your passion</p>
+    </div>
+
+    <div class="row row-cols-2 row-cols-md-3 row-cols-lg-6 g-3">
+      {% for cat in categories %}
+        <div class="col">
+          <a href="{% url 'projects:category_projects' slug=cat.slug %}" class="category-card h-100">
+            <div class="category-card-icon">
+              {% if 'tech' in cat.slug %}
+                <i class="fa-solid fa-laptop-code"></i>
+              {% elif 'health' in cat.slug or 'medical' in cat.slug %}
+                <i class="fa-solid fa-heart-pulse"></i>
+              {% elif 'edu' in cat.slug %}
+                <i class="fa-solid fa-graduation-cap"></i>
+              {% elif 'art' in cat.slug or 'creative' in cat.slug %}
+                <i class="fa-solid fa-palette"></i>
+              {% elif 'comm' in cat.slug or 'social' in cat.slug %}
+                <i class="fa-solid fa-people-roof"></i>
+              {% else %}
+                <i class="fa-solid fa-shapes"></i>
+              {% endif %}
+            </div>
+            <h6 class="fw-bold mb-1">{{ cat.name }}</h6>
+            <small class="text-muted">{{ cat.project_count }} projects</small>
+          </a>
+        </div>
+      {% empty %}
+        <div class="col-12 text-center text-muted">
+          <p>No categories added yet.</p>
+        </div>
+      {% endfor %}
+    </div>
+  </div>
+</div>
+{% endblock %}

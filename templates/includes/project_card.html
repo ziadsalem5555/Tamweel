@@ -1,0 +1,59 @@
+<div class="project-card">
+  <div class="project-card-img-wrapper">
+    {% if project.cover_image %}
+      <img src="{{ project.cover_image }}" alt="{{ project.title }}" class="project-card-img" loading="lazy">
+    {% else %}
+      <div class="w-100 h-100 d-flex flex-column align-items-center justify-content-center bg-light text-muted">
+        <i class="fa-solid fa-image fs-1 mb-2 opacity-50"></i>
+        <small>No image</small>
+      </div>
+    {% endif %}
+
+    <div class="project-card-badge">
+      <span class="badge bg-dark bg-opacity-75 backdrop-blur px-2 py-1 rounded-pill">
+        <i class="fa-solid fa-tag me-1 text-primary"></i>{{ project.category.name }}
+      </span>
+    </div>
+
+    {% if project.is_featured %}
+      <div class="project-featured-badge">
+        <span class="badge bg-warning text-dark px-2 py-1 rounded-pill shadow-sm">
+          <i class="fa-solid fa-star me-1"></i>Featured
+        </span>
+      </div>
+    {% endif %}
+  </div>
+
+  <div class="project-card-body">
+    <h5 class="project-card-title">
+      <a href="{% url 'projects:project_detail' pk=project.pk %}">{{ project.title }}</a>
+    </h5>
+    <p class="project-card-details">{{ project.details|truncatechars:110 }}</p>
+
+    <!-- Progress Bar -->
+    <div class="my-2">
+      <div class="d-flex justify-content-between align-items-center small fw-semibold mb-1">
+        <span class="text-primary">{{ project.donation_progress_percentage }}% funded</span>
+        <span class="text-muted">{{ project.total_donations|floatformat:0 }} / {{ project.total_target|floatformat:0 }} EGP</span>
+      </div>
+      <div class="custom-progress">
+        <div class="custom-progress-bar" role="progressbar" style="width: {{ project.donation_progress_percentage }}%;" aria-valuenow="{{ project.donation_progress_percentage }}" aria-valuemin="0" aria-valuemax="100"></div>
+      </div>
+    </div>
+
+    <!-- Rating & Creator Meta -->
+    <div class="project-card-meta d-flex justify-content-between align-items-center small">
+      <div class="d-flex align-items-center gap-1">
+        <span class="rating-stars-display">
+          <i class="fa-solid fa-star text-warning"></i>
+        </span>
+        <span class="fw-bold">{{ project.average_rating }}</span>
+        <span class="text-muted">({{ project.ratings_count }})</span>
+      </div>
+
+      <div class="text-muted text-truncate" style="max-width: 140px;">
+        <i class="fa-regular fa-user me-1"></i>{{ project.creator.get_full_name }}
+      </div>
+    </div>
+  </div>
+</div>

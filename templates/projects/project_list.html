@@ -1,0 +1,133 @@
+{% extends 'base.html' %}
+
+{% block title %}Explore Campaigns | CrowdFund Egypt{% endblock %}
+
+{% block content %}
+<div class="bg-light py-4 border-bottom mb-4">
+  <div class="container">
+    <div class="row align-items-center g-3">
+      <div class="col-md-6">
+        <h2 class="fw-bold mb-1">
+          {% if selected_category %}
+            Category: <span class="text-primary">{{ selected_category.name }}</span>
+          {% elif selected_tag %}
+            Tag: <span class="text-primary">#{{ selected_tag.name }}</span>
+          {% elif query %}
+            Search: <span class="text-primary">"{{ query }}"</span>
+          {% else %}
+            Explore All Campaigns
+          {% endif %}
+        </h2>
+        <p class="text-muted small mb-0">Showing active fundraising campaigns in Egypt</p>
+      </div>
+
+      <div class="col-md-6">
+        <!-- Search & Filter Bar -->
+        <form method="GET" action="{% url 'projects:project_list' %}" class="d-flex gap-2">
+          <input type="text" name="q" value="{{ query }}" class="form-control rounded-pill" placeholder="Search by title or #tag...">
+          {% if selected_category %}
+            <input type="hidden" name="category" value="{{ selected_category.slug }}">
+          {% endif %}
+          {% if selected_tag %}
+            <input type="hidden" name="tag" value="{{ selected_tag.slug }}">
+          {% endif %}
+          <select name="sort" class="form-select rounded-pill" style="max-width: 170px;" onchange="this.form.submit()">
+            <option value="latest" {% if sort_by == 'latest' %}selected{% endif %}>Latest</option>
+            <option value="oldest" {% if sort_by == 'oldest' %}selected{% endif %}>Oldest</option>
+            <option value="target_high" {% if sort_by == 'target_high' %}selected{% endif %}>Target: High to Low</option>
+            <option value="target_low" {% if sort_by == 'target_low' %}selected{% endif %}>Target: Low to High</option>
+          </select>
+          <button type="submit" class="btn btn-primary rounded-pill px-3">
+            <i class="fa-solid fa-filter"></i>
+          </button>
+        </form>
+      </div>
+    </div>
+  </div>
+</div>
+
+<div class="container py-3">
+  <!-- Categories and Popular Tags Pill Filters -->
+  <div class="d-flex flex-wrap gap-2 mb-4 align-items-center">
+    <span class="small fw-bold text-muted me-1">Categories:</span>
+    <a href="{% url 'projects:project_list' %}" class="badge text-decoration-none {% if not selected_category and not selected_tag %}bg-primary text-white{% else %}bg-white text-dark border{% endif %} px-3 py-2 rounded-pill">
+      All
+    </a>
+    {% for cat in all_categories %}
+      <a href="{% url 'projects:project_list' %}?category={{ cat.slug }}" class="badge text-decoration-none {% if selected_category.slug == cat.slug %}bg-primary text-white{% else %}bg-white text-dark border{% endif %} px-3 py-2 rounded-pill">
+        {{ cat.name }}
+      </a>
+    {% endfor %}
+  </div>
+
+  {% if popular_tags %}
+    <div class="d-flex flex-wrap gap-1 mb-4 align-items-center small">
+      <span class="fw-bold text-muted me-2"><i class="fa-solid fa-hashtag text-primary"></i> Popular Tags:</span>
+      {% for tag in popular_tags %}
+        <a href="{% url 'projects:project_list' %}?tag={{ tag.slug }}" class="tag-badge {% if selected_tag.slug == tag.slug %}bg-primary text-white{% endif %}">
+          #{{ tag.name }}
+        </a>
+      {% endfor %}
+    </div>
+  {% endif %}
+
+  <!-- Projects Grid -->
+  <div class="row row-cols-1 row-cols-md-2 row-cols-lg-3 g-4 mb-5">
+    {% for project in page_obj %}
+      <div class="col">
+        {% include 'includes/project_card.html' with project=project %}
+      </div>
+    {% empty %}
+      <div class="col-12 text-center py-5">
+        <div class="p-5 bg-white rounded-4 border">
+          <i class="fa-solid fa-magnifying-glass fs-1 text-muted mb-3 opacity-50"></i>
+          <h4 class="fw-bold text-dark">No campaigns found</h4>
+          <p class="text-muted">Try adjusting your search criteria or category filter.</p>
+          <a href="{% url 'projects:project_list' %}" class="btn btn-outline-primary rounded-pill px-4">
+            Reset Filters
+          </a>
+        </div>
+      </div>
+    {% endfor %}
+  </div>
+
+  <!-- Pagination -->
+  {% if page_obj.has_other_pages %}
+    <nav aria-label="Projects pagination" class="d-flex justify-content-center mb-5">
+      <ul class="pagination pagination-md shadow-sm">
+        {% if page_obj.has_previous %}
+          <li class="page-item">
+            <a class="page-link" href="?page={{ page_obj.previous_page_number }}{% if query %}&q={{ query }}{% endif %}{% if selected_category %}&category={{ selected_category.slug }}{% endif %}{% if selected_tag %}&tag={{ selected_tag.slug }}{% endif %}{% if sort_by %}&sort={{ sort_by }}{% endif %}">
+              &laquo; Previous
+            </a>
+          </li>
+        {% else %}
+          <li class="page-item disabled"><span class="page-link">&laquo;</span></li>
+        {% endif %}
+
+        {% for num in page_obj.paginator.page_range %}
+          {% if page_obj.number == num %}
+            <li class="page-item active"><span class="page-link">{{ num }}</span></li>
+          {% elif num > page_obj.number|add:'-3' and num < page_obj.number|add:'3' %}
+            <li class="page-item">
+              <a class="page-link" href="?page={{ num }}{% if query %}&q={{ query }}{% endif %}{% if selected_category %}&category={{ selected_category.slug }}{% endif %}{% if selected_tag %}&tag={{ selected_tag.slug }}{% endif %}{% if sort_by %}&sort={{ sort_by }}{% endif %}">
+                {{ num }}
+              </a>
+            </li>
+          {% endif %}
+        {% endfor %}
+
+        {% if page_obj.has_next %}
+          <li class="page-item">
+            <a class="page-link" href="?page={{ page_obj.next_page_number }}{% if query %}&q={{ query }}{% endif %}{% if selected_category %}&category={{ selected_category.slug }}{% endif %}{% if selected_tag %}&tag={{ selected_tag.slug }}{% endif %}{% if sort_by %}&sort={{ sort_by }}{% endif %}">
+              Next &raquo;
+            </a>
+          </li>
+        {% else %}
+          <li class="page-item disabled"><span class="page-link">&raquo;</span></li>
+        {% endif %}
+      </ul>
+    </nav>
+  {% endif %}
+</div>
+{% endblock %}

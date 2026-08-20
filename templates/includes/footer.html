@@ -1,0 +1,60 @@
+<footer class="footer-custom mt-auto">
+  <div class="container">
+    <div class="row g-4">
+      <div class="col-lg-4 col-md-6">
+        <div class="d-flex align-items-center gap-2 mb-3">
+          <span class="d-inline-flex align-items-center justify-content-center bg-primary text-white rounded-3 p-2 shadow-sm" style="width: 36px; height: 36px;">
+            <i class="fa-solid fa-hands-holding-circle"></i>
+          </span>
+          <h5 class="mb-0 text-white">CrowdFund Egypt</h5>
+        </div>
+        <p class="small text-secondary">
+          Empowering innovators, creators, and charitable causes across Egypt. Raise funds, support dreams, and make a real social impact.
+        </p>
+        <div class="d-flex gap-3 mt-3">
+          <a href="#" class="btn btn-sm btn-outline-secondary rounded-circle" style="width: 36px; height: 36px; display: inline-flex; align-items: center; justify-content: center;"><i class="fa-brands fa-facebook-f"></i></a>
+          <a href="#" class="btn btn-sm btn-outline-secondary rounded-circle" style="width: 36px; height: 36px; display: inline-flex; align-items: center; justify-content: center;"><i class="fa-brands fa-twitter"></i></a>
+          <a href="#" class="btn btn-sm btn-outline-secondary rounded-circle" style="width: 36px; height: 36px; display: inline-flex; align-items: center; justify-content: center;"><i class="fa-brands fa-linkedin-in"></i></a>
+        </div>
+      </div>
+
+      <div class="col-lg-2 col-md-6">
+        <h5>Explore</h5>
+        <ul class="list-unstyled small d-flex flex-column gap-2 mb-0">
+          <li><a href="{% url 'home' %}">Home</a></li>
+          <li><a href="{% url 'projects:project_list' %}">All Projects</a></li>
+          <li><a href="{% url 'projects:project_create' %}">Start a Campaign</a></li>
+        </ul>
+      </div>
+
+      <div class="col-lg-3 col-md-6">
+        <h5>Categories</h5>
+        <ul class="list-unstyled small d-flex flex-column gap-2 mb-0">
+          {% if nav_categories %}
+            {% for cat in nav_categories|slice:":5" %}
+              <li><a href="{% url 'projects:category_projects' slug=cat.slug %}">{{ cat.name }}</a></li>
+            {% endfor %}
+          {% else %}
+            <li><span class="text-muted">No categories</span></li>
+          {% endif %}
+        </ul>
+      </div>
+
+      <div class="col-lg-3 col-md-6">
+        <h5>Location & Trust</h5>
+        <p class="small mb-1"><i class="fa-solid fa-location-dot me-2 text-danger"></i> Cairo, Egypt</p>
+        <p class="small mb-1"><i class="fa-solid fa-envelope me-2 text-primary"></i> contact@crowdfundegypt.com</p>
+        <p class="small text-muted mt-2">
+          <i class="fa-solid fa-shield-check me-1 text-success"></i> Verified Egyptian phone numbers & safe crowdfunding protocols.
+        </p>
+      </div>
+    </div>
+
+    <hr class="border-secondary my-4">
+
+    <div class="d-flex flex-column flex-md-row justify-content-between align-items-center small">
+      <p class="mb-0">&copy; {% now "Y" %} CrowdFund Egypt. Built for Django Final Project.</p>
+      <p class="mb-0 text-muted">All rights reserved.</p>
+    </div>
+  </div>
+</footer>

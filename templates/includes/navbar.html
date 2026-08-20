@@ -1,0 +1,119 @@
+<nav class="navbar navbar-expand-lg navbar-custom sticky-top">
+  <div class="container">
+    <a class="navbar-brand d-flex align-items-center gap-2" href="{% url 'home' %}">
+      <span class="d-inline-flex align-items-center justify-content-center bg-primary text-white rounded-3 p-2 shadow-sm" style="width: 38px; height: 38px;">
+        <i class="fa-solid fa-hands-holding-circle fs-5"></i>
+      </span>
+      <span>CrowdFund <span class="text-primary">Egypt</span></span>
+    </a>
+
+    <button class="navbar-toggler border-0 shadow-none" type="button" data-bs-toggle="collapse" data-bs-target="#navbarSupportedContent" aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
+      <span class="navbar-toggler-icon"></span>
+    </button>
+
+    <div class="collapse navbar-collapse" id="navbarSupportedContent">
+      <ul class="navbar-nav me-auto mb-2 mb-lg-0 align-items-lg-center">
+        <li class="nav-item">
+          <a class="nav-link" href="{% url 'home' %}"><i class="fa-solid fa-house me-1"></i> Home</a>
+        </li>
+        <li class="nav-item">
+          <a class="nav-link" href="{% url 'projects:project_list' %}"><i class="fa-solid fa-compass me-1"></i> Browse Projects</a>
+        </li>
+        <li class="nav-item dropdown">
+          <a class="nav-link dropdown-toggle" href="#" role="button" data-bs-toggle="dropdown" aria-expanded="false">
+            <i class="fa-solid fa-layer-group me-1"></i> Categories
+          </a>
+          <ul class="dropdown-menu border-0 shadow-md">
+            {% if nav_categories %}
+              {% for cat in nav_categories %}
+                <li><a class="dropdown-item py-2" href="{% url 'projects:category_projects' slug=cat.slug %}">{{ cat.name }}</a></li>
+              {% endfor %}
+            {% else %}
+              <li><span class="dropdown-item-text text-muted">No categories yet</span></li>
+            {% endif %}
+          </ul>
+        </li>
+      </ul>
+
+      <!-- Quick Search Bar -->
+      <form class="d-flex me-lg-3 my-2 my-lg-0" action="{% url 'projects:project_list' %}" method="GET">
+        <div class="input-group">
+          <span class="input-group-text bg-light border-end-0"><i class="fa-solid fa-magnifying-glass text-muted"></i></span>
+          <input class="form-control bg-light border-start-0 ps-0" type="search" name="q" placeholder="Search title or #tag..." aria-label="Search">
+        </div>
+      </form>
+
+      <!-- Auth Actions -->
+      <ul class="navbar-nav align-items-lg-center">
+        {% if user.is_authenticated %}
+          <li class="nav-item me-lg-2">
+            <a class="btn btn-primary btn-sm px-3 py-2 rounded-pill shadow-sm" href="{% url 'projects:project_create' %}">
+              <i class="fa-solid fa-plus-circle me-1"></i> Create Campaign
+            </a>
+          </li>
+          <li class="nav-item dropdown">
+            <a class="nav-link dropdown-toggle d-flex align-items-center gap-2" href="#" role="button" data-bs-toggle="dropdown" aria-expanded="false">
+              {% if user.profile_picture %}
+                <img src="{{ user.profile_picture.url }}" alt="{{ user.first_name }}" class="rounded-circle object-fit-cover shadow-sm" width="32" height="32">
+              {% else %}
+                <span class="badge bg-secondary rounded-circle d-inline-flex align-items-center justify-content-center shadow-sm" style="width: 32px; height: 32px;">
+                  {{ user.first_name|first|upper }}
+                </span>
+              {% endif %}
+              <span class="fw-semibold">{{ user.first_name }}</span>
+            </a>
+            <ul class="dropdown-menu dropdown-menu-end border-0 shadow-lg py-2">
+              <li>
+                <div class="px-3 py-1">
+                  <p class="mb-0 fw-bold">{{ user.get_full_name }}</p>
+                  <small class="text-muted">{{ user.email }}</small>
+                </div>
+              </li>
+              <li><hr class="dropdown-divider"></li>
+              <li>
+                <a class="dropdown-item py-2" href="{% url 'accounts:profile' %}">
+                  <i class="fa-solid fa-user-circle me-2 text-primary"></i> My Profile
+                </a>
+              </li>
+              <li>
+                <a class="dropdown-item py-2" href="{% url 'projects:my_projects' %}">
+                  <i class="fa-solid fa-folder-open me-2 text-primary"></i> My Projects
+                </a>
+              </li>
+              <li>
+                <a class="dropdown-item py-2" href="{% url 'projects:my_donations' %}">
+                  <i class="fa-solid fa-hand-holding-dollar me-2 text-success"></i> My Donations
+                </a>
+              </li>
+              {% if user.is_staff or user.is_superuser %}
+                <li><hr class="dropdown-divider"></li>
+                <li>
+                  <a class="dropdown-item py-2 text-warning fw-semibold" href="{% url 'admin:index' %}" target="_blank">
+                    <i class="fa-solid fa-shield-halved me-2"></i> Django Admin
+                  </a>
+                </li>
+              {% endif %}
+              <li><hr class="dropdown-divider"></li>
+              <li>
+                <a class="dropdown-item py-2 text-danger" href="{% url 'accounts:logout' %}">
+                  <i class="fa-solid fa-arrow-right-from-bracket me-2"></i> Logout
+                </a>
+              </li>
+            </ul>
+          </li>
+        {% else %}
+          <li class="nav-item">
+            <a class="nav-link" href="{% url 'accounts:login' %}">
+              <i class="fa-solid fa-arrow-right-to-bracket me-1"></i> Login
+            </a>
+          </li>
+          <li class="nav-item ms-lg-2">
+            <a class="btn btn-outline-primary btn-sm px-3 py-2 rounded-pill" href="{% url 'accounts:register' %}">
+              <i class="fa-solid fa-user-plus me-1"></i> Register
+            </a>
+          </li>
+        {% endif %}
+      </ul>
+    </div>
+  </div>
+</nav>

@@ -1,0 +1,199 @@
+{% extends 'base.html' %}
+
+{% block title %}My Profile | CrowdFund Egypt{% endblock %}
+
+{% block content %}
+<div class="container py-5">
+  <div class="row g-4">
+    <!-- User Profile Sidebar -->
+    <div class="col-lg-4">
+      <div class="card border-0 shadow-sm rounded-4 text-center p-4">
+        <div class="position-relative d-inline-block mx-auto mb-3">
+          {% if profile_user.profile_picture %}
+            <img src="{{ profile_user.profile_picture.url }}" alt="{{ profile_user.first_name }}" class="rounded-circle object-fit-cover shadow-sm border border-3 border-light" width="120" height="120">
+          {% else %}
+            <div class="bg-primary text-white rounded-circle d-flex align-items-center justify-content-center shadow-sm mx-auto" style="width: 120px; height: 120px; font-size: 3rem;">
+              {{ profile_user.first_name|first|upper }}
+            </div>
+          {% endif %}
+        </div>
+
+        <h4 class="fw-bold mb-1">{{ profile_user.get_full_name }}</h4>
+        <p class="text-muted small mb-3"><i class="fa-solid fa-envelope me-1"></i> {{ profile_user.email }}</p>
+
+        <div class="bg-light rounded-3 p-3 text-start small mb-3">
+          <div class="mb-2">
+            <strong><i class="fa-solid fa-phone me-2 text-primary"></i> Mobile:</strong> {{ profile_user.mobile_phone }}
+          </div>
+          <div class="mb-2">
+            <strong><i class="fa-solid fa-location-dot me-2 text-danger"></i> Country:</strong> {{ profile_user.country|default:'Egypt' }}
+          </div>
+          {% if profile_user.birthdate %}
+            <div class="mb-2">
+              <strong><i class="fa-solid fa-cake-candles me-2 text-warning"></i> Birthdate:</strong> {{ profile_user.birthdate }}
+            </div>
+          {% endif %}
+          {% if profile_user.facebook_profile %}
+            <div class="mb-0">
+              <strong><i class="fa-brands fa-facebook me-2 text-primary"></i> Facebook:</strong>
+              <a href="{{ profile_user.facebook_profile }}" target="_blank" class="text-decoration-none">Profile Link</a>
+            </div>
+          {% endif %}
+        </div>
+
+        <div class="d-grid gap-2">
+          <a href="{% url 'accounts:edit_profile' %}" class="btn btn-outline-primary rounded-pill btn-sm">
+            <i class="fa-solid fa-user-pen me-1"></i> Edit Profile
+          </a>
+          <a href="{% url 'accounts:delete_account' %}" class="btn btn-outline-danger rounded-pill btn-sm">
+            <i class="fa-solid fa-trash me-1"></i> Delete Account
+          </a>
+        </div>
+      </div>
+    </div>
+
+    <!-- User Projects & Donations Tabs -->
+    <div class="col-lg-8">
+      <div class="card border-0 shadow-sm rounded-4 overflow-hidden">
+        <div class="card-header bg-white border-bottom p-0">
+          <ul class="nav nav-tabs nav-fill border-0" id="profileTabs" role="tablist">
+            <li class="nav-item" role="presentation">
+              <button class="nav-link active py-3 fw-bold" id="projects-tab" data-bs-toggle="tab" data-bs-target="#projects-content" type="button" role="tab">
+                <i class="fa-solid fa-folder-open me-2 text-primary"></i> My Projects ({{ user_projects.count }})
+              </button>
+            </li>
+            <li class="nav-item" role="presentation">
+              <button class="nav-link py-3 fw-bold" id="donations-tab" data-bs-toggle="tab" data-bs-target="#donations-content" type="button" role="tab">
+                <i class="fa-solid fa-hand-holding-dollar me-2 text-success"></i> My Donations ({{ user_donations.count }})
+              </button>
+            </li>
+          </ul>
+        </div>
+
+        <div class="card-body p-4">
+          <div class="tab-content" id="profileTabsContent">
+            <!-- Projects Tab -->
+            <div class="tab-pane fade show active" id="projects-content" role="tabpanel">
+              {% if user_projects %}
+                <div class="d-flex justify-content-between align-items-center mb-3">
+                  <h5 class="fw-bold mb-0">Campaigns Created By You</h5>
+                  <a href="{% url 'projects:project_create' %}" class="btn btn-sm btn-primary rounded-pill">
+                    <i class="fa-solid fa-plus me-1"></i> New Campaign
+                  </a>
+                </div>
+
+                <div class="d-flex flex-column gap-3">
+                  {% for p in user_projects %}
+                    <div class="card border rounded-3 p-3 shadow-none">
+                      <div class="d-flex flex-column flex-md-row justify-content-between align-items-start gap-3">
+                        <div class="d-flex gap-3">
+                          {% if p.cover_image %}
+                            <img src="{{ p.cover_image }}" alt="{{ p.title }}" class="rounded-3 object-fit-cover" width="80" height="80">
+                          {% else %}
+                            <div class="bg-light rounded-3 d-flex align-items-center justify-content-center text-muted" style="width: 80px; height: 80px;">
+                              <i class="fa-solid fa-image"></i>
+                            </div>
+                          {% endif %}
+                          <div>
+                            <h6 class="fw-bold mb-1">
+                              <a href="{% url 'projects:project_detail' pk=p.pk %}" class="text-decoration-none text-dark">{{ p.title }}</a>
+                            </h6>
+                            <div class="small text-muted mb-2">
+                              Category: <span class="badge bg-light text-dark border">{{ p.category.name }}</span>
+                              &bull; Status:
+                              {% if p.status == 'running' %}
+                                <span class="badge bg-success">Running</span>
+                              {% elif p.status == 'cancelled' %}
+                                <span class="badge bg-danger">Cancelled</span>
+                              {% elif p.status == 'completed' %}
+                                <span class="badge bg-primary">Completed</span>
+                              {% else %}
+                                <span class="badge bg-secondary">{{ p.status|title }}</span>
+                              {% endif %}
+                            </div>
+                            <div class="small text-muted">
+                              Raised: <strong class="text-success">{{ p.total_donations|floatformat:0 }} EGP</strong> of {{ p.total_target|floatformat:0 }} EGP ({{ p.donation_progress_percentage }}%)
+                            </div>
+                          </div>
+                        </div>
+
+                        <div class="d-flex gap-2 align-self-md-center">
+                          <a href="{% url 'projects:project_edit' pk=p.pk %}" class="btn btn-outline-secondary btn-sm rounded-pill">
+                            <i class="fa-solid fa-pen-to-square"></i> Edit
+                          </a>
+                          {% if p.status == 'running' and p.can_be_cancelled %}
+                            <a href="{% url 'projects:project_cancel' pk=p.pk %}" class="btn btn-outline-danger btn-sm rounded-pill">
+                              <i class="fa-solid fa-ban"></i> Cancel
+                            </a>
+                          {% endif %}
+                        </div>
+                      </div>
+                    </div>
+                  {% endfor %}
+                </div>
+              {% else %}
+                <div class="text-center py-5 text-muted">
+                  <i class="fa-regular fa-folder-open fs-1 mb-2"></i>
+                  <p>You haven't created any campaigns yet.</p>
+                  <a href="{% url 'projects:project_create' %}" class="btn btn-primary rounded-pill px-4">
+                    Create Your First Campaign
+                  </a>
+                </div>
+              {% endif %}
+            </div>
+
+            <!-- Donations Tab -->
+            <div class="tab-pane fade" id="donations-content" role="tabpanel">
+              {% if user_donations %}
+                <h5 class="fw-bold mb-3">Your Contributions</h5>
+                <div class="table-responsive">
+                  <table class="table table-hover align-middle">
+                    <thead class="table-light">
+                      <tr>
+                        <th>Campaign</th>
+                        <th>Amount</th>
+                        <th>Date</th>
+                        <th>Action</th>
+                      </tr>
+                    </thead>
+                    <tbody>
+                      {% for d in user_donations %}
+                        <tr>
+                          <td>
+                            <a href="{% url 'projects:project_detail' pk=d.project.pk %}" class="fw-semibold text-dark text-decoration-none">
+                              {{ d.project.title }}
+                            </a>
+                          </td>
+                          <td>
+                            <span class="badge bg-success bg-opacity-10 text-success fs-6 fw-bold">
+                              {{ d.amount|floatformat:2 }} EGP
+                            </span>
+                          </td>
+                          <td class="small text-muted">{{ d.created_at|date:"M d, Y" }}</td>
+                          <td>
+                            <a href="{% url 'projects:project_detail' pk=d.project.pk %}" class="btn btn-sm btn-outline-primary rounded-pill">
+                              View Project
+                            </a>
+                          </td>
+                        </tr>
+                      {% endfor %}
+                    </tbody>
+                  </table>
+                </div>
+              {% else %}
+                <div class="text-center py-5 text-muted">
+                  <i class="fa-solid fa-hand-holding-dollar fs-1 mb-2"></i>
+                  <p>You haven't made any donations yet.</p>
+                  <a href="{% url 'projects:project_list' %}" class="btn btn-outline-primary rounded-pill px-4">
+                    Explore Campaigns to Support
+                  </a>
+                </div>
+              {% endif %}
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+{% endblock %}

@@ -1,0 +1,57 @@
+{% extends 'base.html' %}
+
+{% block title %}Delete Account | CrowdFund Egypt{% endblock %}
+
+{% block content %}
+<div class="container py-5">
+  <div class="row justify-content-center">
+    <div class="col-lg-6 col-md-8">
+      <div class="card border-0 shadow-lg rounded-4 overflow-hidden">
+        <div class="card-header bg-danger text-white text-center py-4">
+          <div class="d-inline-flex align-items-center justify-content-center bg-white text-danger rounded-circle mb-2" style="width: 60px; height: 60px;">
+            <i class="fa-solid fa-triangle-exclamation fs-3"></i>
+          </div>
+          <h3 class="fw-bold mb-0">Delete Your Account</h3>
+          <p class="small text-white-50 mb-0">Permanent Account Deletion</p>
+        </div>
+
+        <div class="card-body p-4 p-md-5">
+          <div class="alert alert-danger border-0 small mb-4">
+            <h6 class="fw-bold mb-1"><i class="fa-solid fa-circle-exclamation me-1"></i> Warning: This action cannot be undone!</h6>
+            Deleting your account will permanently delete your personal information, profile, campaigns, and donation records.
+          </div>
+
+          <form method="POST" novalidate>
+            {% csrf_token %}
+
+            {% if form.non_field_errors %}
+              <div class="alert alert-danger">
+                {% for err in form.non_field_errors %}
+                  <div>{{ err }}</div>
+                {% endfor %}
+              </div>
+            {% endif %}
+
+            <div class="mb-4">
+              <label class="form-label fw-semibold small">Please enter your password to confirm:</label>
+              {{ form.password }}
+              {% if form.password.errors %}
+                <div class="text-danger small mt-1">{{ form.password.errors.0 }}</div>
+              {% endif %}
+            </div>
+
+            <div class="d-flex justify-content-between gap-3">
+              <a href="{% url 'accounts:profile' %}" class="btn btn-light rounded-pill px-4">
+                No, Keep My Account
+              </a>
+              <button type="submit" class="btn btn-danger rounded-pill px-4 fw-semibold shadow-sm">
+                <i class="fa-solid fa-trash me-1"></i> Permanently Delete
+              </button>
+            </div>
+          </form>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+{% endblock %}

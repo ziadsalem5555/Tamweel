@@ -1,0 +1,64 @@
+{% extends 'base.html' %}
+
+{% block title %}Login | CrowdFund Egypt{% endblock %}
+
+{% block content %}
+<div class="container py-5">
+  <div class="row justify-content-center">
+    <div class="col-lg-5 col-md-7">
+      <div class="card border-0 shadow-lg rounded-4 overflow-hidden">
+        <div class="card-header bg-primary text-white text-center py-4">
+          <div class="d-inline-flex align-items-center justify-content-center bg-white text-primary rounded-circle mb-2" style="width: 50px; height: 50px;">
+            <i class="fa-solid fa-arrow-right-to-bracket fs-4"></i>
+          </div>
+          <h3 class="fw-bold mb-0">Welcome Back</h3>
+          <p class="small text-white-50 mb-0">Log in to CrowdFund Egypt</p>
+        </div>
+
+        <div class="card-body p-4 p-md-5">
+          <form method="POST" novalidate>
+            {% csrf_token %}
+
+            {% if form.non_field_errors %}
+              <div class="alert alert-danger">
+                {% for err in form.non_field_errors %}
+                  <div><i class="fa-solid fa-triangle-exclamation me-1"></i> {{ err }}</div>
+                {% endfor %}
+              </div>
+            {% endif %}
+
+            <div class="mb-3">
+              <label class="form-label fw-semibold small">Email Address</label>
+              {{ form.email }}
+              {% if form.email.errors %}
+                <div class="text-danger small mt-1">{{ form.email.errors.0 }}</div>
+              {% endif %}
+            </div>
+
+            <div class="mb-3">
+              <div class="d-flex justify-content-between align-items-center">
+                <label class="form-label fw-semibold small mb-0">Password</label>
+                <a href="{% url 'accounts:password_reset' %}" class="small text-primary text-decoration-none">Forgot Password?</a>
+              </div>
+              {{ form.password }}
+              {% if form.password.errors %}
+                <div class="text-danger small mt-1">{{ form.password.errors.0 }}</div>
+              {% endif %}
+            </div>
+
+            <div class="d-grid mb-4">
+              <button type="submit" class="btn btn-primary btn-lg rounded-pill fw-semibold shadow-sm">
+                Log In
+              </button>
+            </div>
+
+            <div class="text-center small text-muted">
+              Don't have an account? <a href="{% url 'accounts:register' %}" class="fw-bold text-primary">Register here</a>
+            </div>
+          </form>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+{% endblock %}

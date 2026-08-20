@@ -1,0 +1,136 @@
+{% extends 'base.html' %}
+
+{% block title %}{% if is_edit %}Edit Campaign | {{ project.title }}{% else %}Start a Campaign | CrowdFund Egypt{% endblock %}{% endif %}
+
+{% block content %}
+<div class="container py-5">
+  <div class="row justify-content-center">
+    <div class="col-lg-8">
+      <div class="card border-0 shadow-lg rounded-4 overflow-hidden">
+        <div class="card-header bg-primary text-white py-4 px-4 px-md-5">
+          <div class="d-flex align-items-center gap-3">
+            <div class="d-inline-flex align-items-center justify-content-center bg-white text-primary rounded-circle" style="width: 50px; height: 50px;">
+              <i class="fa-solid fa-rocket fs-4"></i>
+            </div>
+            <div>
+              <h3 class="fw-bold mb-0">{% if is_edit %}Edit Your Campaign{% else %}Start a Fundraising Campaign{% endif %}</h3>
+              <p class="small text-white-50 mb-0">Share your vision with supporters across Egypt</p>
+            </div>
+          </div>
+        </div>
+
+        <div class="card-body p-4 p-md-5">
+          <form method="POST" enctype="multipart/form-data" novalidate>
+            {% csrf_token %}
+
+            {% if form.non_field_errors %}
+              <div class="alert alert-danger">
+                {% for err in form.non_field_errors %}
+                  <div><i class="fa-solid fa-triangle-exclamation me-1"></i> {{ err }}</div>
+                {% endfor %}
+              </div>
+            {% endif %}
+
+            <!-- Title -->
+            <div class="mb-3">
+              <label class="form-label fw-semibold small">Campaign Title <span class="text-danger">*</span></label>
+              {{ form.title }}
+              {% if form.title.errors %}
+                <div class="text-danger small mt-1">{{ form.title.errors.0 }}</div>
+              {% endif %}
+            </div>
+
+            <!-- Category & Target -->
+            <div class="row g-3 mb-3">
+              <div class="col-md-6">
+                <label class="form-label fw-semibold small">Category <span class="text-danger">*</span></label>
+                {{ form.category }}
+                {% if form.category.errors %}
+                  <div class="text-danger small mt-1">{{ form.category.errors.0 }}</div>
+                {% endif %}
+              </div>
+              <div class="col-md-6">
+                <label class="form-label fw-semibold small">Total Target (in EGP) <span class="text-danger">*</span></label>
+                <div class="input-group">
+                  <span class="input-group-text">EGP</span>
+                  {{ form.total_target }}
+                </div>
+                {% if form.total_target.errors %}
+                  <div class="text-danger small mt-1">{{ form.total_target.errors.0 }}</div>
+                {% endif %}
+              </div>
+            </div>
+
+            <!-- Details -->
+            <div class="mb-3">
+              <label class="form-label fw-semibold small">Campaign Details & Story <span class="text-danger">*</span></label>
+              {{ form.details }}
+              {% if form.details.errors %}
+                <div class="text-danger small mt-1">{{ form.details.errors.0 }}</div>
+              {% endif %}
+              <div class="form-text">Explain your goal, what the funds will be used for, and why people in Egypt should back you.</div>
+            </div>
+
+            <!-- Start & End Date -->
+            <div class="row g-3 mb-3">
+              <div class="col-md-6">
+                <label class="form-label fw-semibold small">Start Date & Time <span class="text-danger">*</span></label>
+                {{ form.start_time }}
+                {% if form.start_time.errors %}
+                  <div class="text-danger small mt-1">{{ form.start_time.errors.0 }}</div>
+                {% endif %}
+              </div>
+              <div class="col-md-6">
+                <label class="form-label fw-semibold small">End Date & Time <span class="text-danger">*</span></label>
+                {{ form.end_time }}
+                {% if form.end_time.errors %}
+                  <div class="text-danger small mt-1">{{ form.end_time.errors.0 }}</div>
+                {% endif %}
+              </div>
+            </div>
+
+            <!-- Tags -->
+            <div class="mb-3">
+              <label class="form-label fw-semibold small">Campaign Tags</label>
+              {{ form.tags_input }}
+              {% if form.tags_input.errors %}
+                <div class="text-danger small mt-1">{{ form.tags_input.errors.0 }}</div>
+              {% endif %}
+            </div>
+
+            <!-- Multiple Images Upload -->
+            <div class="mb-4">
+              <label class="form-label fw-semibold small">Project Images (Upload Multiple)</label>
+              {{ form.images }}
+              {% if form.images.errors %}
+                <div class="text-danger small mt-1">{{ form.images.errors.0 }}</div>
+              {% endif %}
+              <div class="form-text">You can select multiple photos. The first image will be used as the cover photo in the carousel.</div>
+
+              {% if is_edit and project.images.all %}
+                <div class="mt-3">
+                  <span class="small fw-semibold text-muted d-block mb-2">Existing Images:</span>
+                  <div class="d-flex flex-wrap gap-2">
+                    {% for img in project.images.all %}
+                      <img src="{{ img.image.url }}" alt="Project image" class="rounded-3 object-fit-cover border" width="70" height="70">
+                    {% endfor %}
+                  </div>
+                </div>
+              {% endif %}
+            </div>
+
+            <div class="d-flex justify-content-end gap-2">
+              <a href="{% if is_edit %}{% url 'projects:project_detail' pk=project.pk %}{% else %}{% url 'home' %}{% endif %}" class="btn btn-light rounded-pill px-4">
+                Cancel
+              </a>
+              <button type="submit" class="btn btn-primary rounded-pill px-5 fw-semibold shadow-sm">
+                {% if is_edit %}<i class="fa-solid fa-save me-1"></i> Update Campaign{% else %}<i class="fa-solid fa-rocket me-1"></i> Launch Campaign{% endif %}
+              </button>
+            </div>
+          </form>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+{% endblock %}

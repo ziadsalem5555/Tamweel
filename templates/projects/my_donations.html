@@ -1,0 +1,85 @@
+{% extends 'base.html' %}
+
+{% block title %}My Donations | CrowdFund Egypt{% endblock %}
+
+{% block content %}
+<div class="container py-5">
+  <div class="d-flex justify-content-between align-items-center mb-4">
+    <div>
+      <h2 class="fw-bold mb-1">My Donations</h2>
+      <p class="text-muted small mb-0">Track all your contributions and supported causes</p>
+    </div>
+    <a href="{% url 'projects:project_list' %}" class="btn btn-outline-primary rounded-pill">
+      <i class="fa-solid fa-compass me-1"></i> Explore More Campaigns
+    </a>
+  </div>
+
+  <div class="card border-0 shadow-sm rounded-4 overflow-hidden">
+    <div class="card-body p-0">
+      {% if donations %}
+        <div class="table-responsive">
+          <table class="table table-hover align-middle mb-0">
+            <thead class="table-light">
+              <tr>
+                <th class="ps-4">Campaign</th>
+                <th>Category</th>
+                <th>Donation Amount</th>
+                <th>Date</th>
+                <th class="text-end pe-4">Action</th>
+              </tr>
+            </thead>
+            <tbody>
+              {% for d in donations %}
+                <tr>
+                  <td class="ps-4">
+                    <div class="d-flex align-items-center gap-3">
+                      {% if d.project.cover_image %}
+                        <img src="{{ d.project.cover_image }}" alt="{{ d.project.title }}" class="rounded-3 object-fit-cover" width="50" height="50">
+                      {% else %}
+                        <div class="bg-light rounded-3 d-flex align-items-center justify-content-center text-muted" style="width: 50px; height: 50px;">
+                          <i class="fa-solid fa-image"></i>
+                        </div>
+                      {% endif %}
+                      <div>
+                        <h6 class="fw-bold mb-0">
+                          <a href="{% url 'projects:project_detail' pk=d.project.pk %}" class="text-decoration-none text-dark">
+                            {{ d.project.title }}
+                          </a>
+                        </h6>
+                        <small class="text-muted">Organizer: {{ d.project.creator.get_full_name }}</small>
+                      </div>
+                    </div>
+                  </td>
+                  <td>
+                    <span class="badge bg-light text-dark border">{{ d.project.category.name }}</span>
+                  </td>
+                  <td>
+                    <span class="badge bg-success bg-opacity-10 text-success fs-6 fw-bold">
+                      {{ d.amount|floatformat:2 }} EGP
+                    </span>
+                  </td>
+                  <td class="small text-muted">{{ d.created_at|date:"M d, Y, h:i A" }}</td>
+                  <td class="text-end pe-4">
+                    <a href="{% url 'projects:project_detail' pk=d.project.pk %}" class="btn btn-sm btn-outline-primary rounded-pill">
+                      View Project
+                    </a>
+                  </td>
+                </tr>
+              {% endfor %}
+            </tbody>
+          </table>
+        </div>
+      {% else %}
+        <div class="text-center py-5 text-muted">
+          <i class="fa-solid fa-hand-holding-dollar fs-1 mb-2"></i>
+          <h4 class="fw-bold text-dark">No donations yet</h4>
+          <p class="text-muted">You haven't made any donations yet. Support an Egyptian dream today!</p>
+          <a href="{% url 'projects:project_list' %}" class="btn btn-primary rounded-pill px-4">
+            Browse Projects
+          </a>
+        </div>
+      {% endif %}
+    </div>
+  </div>
+</div>
+{% endblock %}

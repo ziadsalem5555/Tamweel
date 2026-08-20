@@ -1,0 +1,72 @@
+{% extends 'base.html' %}
+
+{% block title %}{{ category.name }} Projects | CrowdFund Egypt{% endblock %}
+
+{% block content %}
+<div class="bg-light py-4 border-bottom mb-4">
+  <div class="container">
+    <div class="d-flex flex-column flex-md-row justify-content-between align-items-md-center gap-3">
+      <div>
+        <nav aria-label="breadcrumb">
+          <ol class="breadcrumb mb-1 small">
+            <li class="breadcrumb-item"><a href="{% url 'home' %}">Home</a></li>
+            <li class="breadcrumb-item"><a href="{% url 'projects:project_list' %}">Projects</a></li>
+            <li class="breadcrumb-item active">{{ category.name }}</li>
+          </ol>
+        </nav>
+        <h2 class="fw-bold mb-1">{{ category.name }} Campaigns</h2>
+        {% if category.description %}
+          <p class="text-muted small mb-0">{{ category.description }}</p>
+        {% endif %}
+      </div>
+      <a href="{% url 'projects:project_create' %}" class="btn btn-primary rounded-pill btn-sm align-self-start align-self-md-center">
+        <i class="fa-solid fa-plus me-1"></i> Start a {{ category.name }} Project
+      </a>
+    </div>
+  </div>
+</div>
+
+<div class="container py-3">
+  <div class="row row-cols-1 row-cols-md-2 row-cols-lg-3 g-4 mb-5">
+    {% for project in page_obj %}
+      <div class="col">
+        {% include 'includes/project_card.html' with project=project %}
+      </div>
+    {% empty %}
+      <div class="col-12 text-center py-5">
+        <div class="p-5 bg-white rounded-4 border">
+          <i class="fa-solid fa-folder-open fs-1 text-muted mb-3 opacity-50"></i>
+          <h4 class="fw-bold">No active campaigns in {{ category.name }}</h4>
+          <p class="text-muted">Be the first to launch an innovative project in this category!</p>
+          <a href="{% url 'projects:project_create' %}" class="btn btn-primary rounded-pill px-4">
+            Launch Campaign
+          </a>
+        </div>
+      </div>
+    {% endfor %}
+  </div>
+
+  <!-- Pagination -->
+  {% if page_obj.has_other_pages %}
+    <nav aria-label="Category pagination" class="d-flex justify-content-center mb-5">
+      <ul class="pagination pagination-md shadow-sm">
+        {% if page_obj.has_previous %}
+          <li class="page-item">
+            <a class="page-link" href="?page={{ page_obj.previous_page_number }}">&laquo; Previous</a>
+          </li>
+        {% endif %}
+        {% for num in page_obj.paginator.page_range %}
+          <li class="page-item {% if page_obj.number == num %}active{% endif %}">
+            <a class="page-link" href="?page={{ num }}">{{ num }}</a>
+          </li>
+        {% endfor %}
+        {% if page_obj.has_next %}
+          <li class="page-item">
+            <a class="page-link" href="?page={{ page_obj.next_page_number }}">Next &raquo;</a>
+          </li>
+        {% endif %}
+      </ul>
+    </nav>
+  {% endif %}
+</div>
+{% endblock %}

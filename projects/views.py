@@ -7,6 +7,7 @@ from django.db.models import Q, Avg, Sum, Count
 from django.utils import timezone
 from django.utils.text import slugify
 from django.http import HttpResponseForbidden, JsonResponse
+from django.core.exceptions import PermissionDenied
 
 from .models import (
     Project, Category, Tag, ProjectImage, Donation,
@@ -268,12 +269,12 @@ def project_edit_view(request, pk):
 
             # Handle Newly Uploaded Images
             uploaded_files = request.FILES.getlist('images')
-            has_existing = project.images.exists()
+            has_cover = project.images.filter(is_cover=True).exists()
             for index, file in enumerate(uploaded_files):
                 ProjectImage.objects.create(
                     project=project,
                     image=file,
-                    is_cover=(not has_existing and index == 0)
+                    is_cover=(not has_cover and index == 0)
                 )
 
             messages.success(request, 'Campaign updated successfully!')
@@ -282,6 +283,68 @@ def project_edit_view(request, pk):
         form = ProjectForm(instance=project)
 
     return render(request, 'projects/project_form.html', {'form': form, 'project': project, 'is_edit': True})
+
+
+@login_required
+def project_image_delete_view(request, project_id, image_id):
+    """
+    Deletes a single project image belonging to a specific campaign.
+    Enforces authorization:
+    - User must be authenticated
+    - Project must exist
+    - Image must exist and belong directly to the project
+    - User must be project creator or staff/admin
+    - Rejects unauthorized users with 403 Forbidden
+    - Removes physical image file from storage
+    - Automatically updates cover image if deleted image was cover
+    """
+    project = get_object_or_404(Project, pk=project_id)
+    image = get_object_or_404(ProjectImage, pk=image_id, project=project)
+
+    if project.creator != request.user and not request.user.is_staff:
+        if request.headers.get('x-requested-with') == 'XMLHttpRequest' or request.content_type == 'application/json':
+            return JsonResponse({'error': 'You do not have permission to delete this image.'}, status=403)
+        return HttpResponseForbidden('You do not have permission to delete this image.')
+
+    if request.method in ['POST', 'DELETE']:
+        was_cover = image.is_cover
+
+        # Delete physical file from storage
+        if image.image:
+            try:
+                storage = image.image.storage
+                name = image.image.name
+                if storage and name and storage.exists(name):
+                    storage.delete(name)
+            except Exception:
+                pass
+
+        # Delete database record
+        image.delete()
+
+        # If deleted image was cover, assign cover to the next available image
+        if was_cover:
+            next_image = project.images.first()
+            if next_image:
+                next_image.is_cover = True
+                next_image.save(update_fields=['is_cover'])
+
+        remaining_count = project.images.count()
+        new_cover_url = project.cover_image
+
+        if request.headers.get('x-requested-with') == 'XMLHttpRequest' or request.content_type == 'application/json':
+            return JsonResponse({
+                'success': True,
+                'message': 'Image deleted successfully.',
+                'image_id': image_id,
+                'remaining_count': remaining_count,
+                'new_cover_url': new_cover_url
+            })
+
+        messages.success(request, 'Image deleted successfully.')
+        return redirect('projects:project_edit', pk=project.pk)
+
+    return redirect('projects:project_edit', pk=project.pk)
 
 
 @login_required
@@ -404,6 +467,25 @@ def rate_project_view(request, pk):
 
 
 @login_required
+def remove_rating_view(request, pk):
+    """
+    Allows the authenticated user to remove their own rating from a project.
+    """
+    project = get_object_or_404(Project, pk=pk)
+
+    if request.method == 'POST':
+        rating = Rating.objects.filter(user=request.user, project=project).first()
+        if rating:
+            rating.delete()
+            messages.success(request, 'Your rating has been removed.')
+        else:
+            messages.info(request, 'You have not rated this project.')
+
+    return redirect('projects:project_detail', pk=pk)
+
+
+
+@login_required
 def report_project_view(request, pk):
     """Reports an inappropriate project."""
     project = get_object_or_404(Project, pk=pk)
@@ -463,6 +545,27 @@ def report_comment_view(request, pk, comment_id):
             messages.error(request, 'Please specify the reason for reporting this comment.')
 
     return redirect('projects:project_detail', pk=pk)
+
+
+@login_required
+def delete_comment_view(request, pk, comment_id):
+    """
+    Deletes a comment or reply.
+    Only the comment owner or an authorized admin/staff user can delete it.
+    """
+    project = get_object_or_404(Project, pk=pk)
+    comment = get_object_or_404(Comment, pk=comment_id, project=project)
+
+    if request.method == 'POST':
+        # Enforce strict ownership / admin permission check
+        if comment.user != request.user and not (request.user.is_staff or request.user.is_superuser):
+            raise PermissionDenied("You do not have permission to delete this comment.")
+
+        comment.delete()
+        messages.success(request, 'Comment deleted successfully.')
+
+    return redirect('projects:project_detail', pk=pk)
+
 
 
 @login_required

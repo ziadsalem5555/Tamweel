@@ -49,9 +49,14 @@ class UserRegistrationForm(forms.ModelForm):
         fields = ['first_name', 'last_name', 'email', 'mobile_phone', 'profile_picture']
 
     def clean_email(self):
-        email = self.cleaned_data.get('email').lower()
-        if User.objects.filter(email__iexact=email).exists():
-            raise ValidationError(_('A user with this email address already exists.'))
+        email = self.cleaned_data.get('email', '').strip().lower()
+        existing_user = User.objects.filter(email__iexact=email).first()
+        if existing_user:
+            if existing_user.is_active:
+                raise ValidationError(_('An active account with this email address already exists. Please log in.'))
+            else:
+                # Delete unverified stale user record so fresh registration with new details/password can proceed
+                existing_user.delete()
         return email
 
     def clean(self):
@@ -138,3 +143,60 @@ class AccountDeleteForm(forms.Form):
         if not self.user.check_password(password):
             raise ValidationError(_('Incorrect password. Account deletion aborted.'))
         return password
+
+
+class TamweelPasswordResetForm(PasswordResetForm):
+    email = forms.EmailField(
+        max_length=254,
+        widget=forms.EmailInput(attrs={
+            'class': 'form-control',
+            'placeholder': 'name@example.com',
+            'autocomplete': 'email',
+            'required': True
+        })
+    )
+
+    def send_mail(
+        self,
+        subject_template_name,
+        email_template_name,
+        context,
+        from_email,
+        to_email,
+        html_email_template_name=None,
+    ):
+        from django.urls import reverse
+        print("\n" + "=" * 60)
+        print("*** [TAMWEEL - PASSWORD RESET EMAIL DELIVERY] ***")
+        print(f"   Recipient : {to_email}")
+        protocol = context.get('protocol', 'http')
+        domain = context.get('domain', '127.0.0.1:8000')
+        uid = context.get('uid')
+        token = context.get('token')
+        reset_url = f"{protocol}://{domain}{reverse('accounts:password_reset_confirm', kwargs={'uidb64': uid, 'token': token})}"
+        print(f"   Reset URL : {reset_url}")
+        print("=" * 60 + "\n")
+        super().send_mail(
+            subject_template_name,
+            email_template_name,
+            context,
+            from_email,
+            to_email,
+            html_email_template_name=html_email_template_name,
+        )
+
+
+class TamweelSetPasswordForm(SetPasswordForm):
+    def __init__(self, *args, **kwargs):
+        super().__init__(*args, **kwargs)
+        self.fields['new_password1'].widget.attrs.update({
+            'class': 'form-control',
+            'placeholder': 'Enter new password (min. 8 characters)',
+            'autocomplete': 'new-password'
+        })
+        self.fields['new_password2'].widget.attrs.update({
+            'class': 'form-control',
+            'placeholder': 'Confirm new password',
+            'autocomplete': 'new-password'
+        })
+

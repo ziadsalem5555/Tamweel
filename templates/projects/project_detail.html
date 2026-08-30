@@ -1,73 +1,134 @@
 {% extends 'base.html' %}
-{% load static %}
+{% load humanize i18n static %}
 
 {% block title %}{{ project.title }} | CrowdFund Egypt{% endblock %}
 
+{% block extra_css %}
+<style>
+  .tamweel-star-rating {
+    display: inline-flex !important;
+    align-items: center !important;
+    gap: 6px !important;
+    user-select: none !important;
+    vertical-align: middle !important;
+    flex-wrap: nowrap !important;
+  }
+  .tamweel-star-rating .star-rating-btn {
+    background: transparent !important;
+    border: none !important;
+    padding: 2px !important;
+    margin: 0 !important;
+    cursor: pointer !important;
+    color: #cbd5e1 !important;
+    font-size: 22px !important;
+    line-height: 1 !important;
+    display: inline-flex !important;
+    align-items: center !important;
+    justify-content: center !important;
+    transition: color 0.15s ease, transform 0.15s ease !important;
+    outline: none !important;
+    box-shadow: none !important;
+    border-radius: 4px !important;
+  }
+  .tamweel-star-rating .star-rating-btn i {
+    color: inherit !important;
+    pointer-events: none !important;
+    display: inline-block !important;
+  }
+  .tamweel-star-rating .star-rating-btn:hover,
+  .tamweel-star-rating .star-rating-btn.is-hovered {
+    color: #f59e0b !important;
+    transform: scale(1.18) !important;
+  }
+  .tamweel-star-rating .star-rating-btn.is-selected {
+    color: #f59e0b !important;
+  }
+  .tamweel-star-rating .star-rating-btn:focus-visible {
+    outline: 2px solid var(--primary, #0f9d8d) !important;
+    outline-offset: 2px !important;
+  }
+</style>
+{% endblock %}
+
 {% block content %}
 <div class="container py-4">
-  <!-- Breadcrumb & Top Controls -->
+  
+  <!-- Breadcrumb & Creator / Staff Actions -->
   <div class="d-flex flex-wrap justify-content-between align-items-center mb-3">
     <nav aria-label="breadcrumb">
       <ol class="breadcrumb mb-0 small">
-        <li class="breadcrumb-item"><a href="{% url 'home' %}">Home</a></li>
-        <li class="breadcrumb-item"><a href="{% url 'projects:project_list' %}">Projects</a></li>
+        <li class="breadcrumb-item"><a href="{% url 'home' %}">{% translate "Home" %}</a></li>
+        <li class="breadcrumb-item"><a href="{% url 'projects:project_list' %}">{% translate "Projects" %}</a></li>
         <li class="breadcrumb-item"><a href="{% url 'projects:category_projects' slug=project.category.slug %}">{{ project.category.name }}</a></li>
         <li class="breadcrumb-item active text-truncate" style="max-width: 250px;">{{ project.title }}</li>
       </ol>
     </nav>
 
-    <!-- Creator Actions -->
+    <!-- Creator & Staff Actions -->
     <div class="d-flex gap-2">
       {% if user == project.creator or user.is_staff %}
-        <a href="{% url 'projects:project_edit' pk=project.pk %}" class="btn btn-outline-secondary btn-sm rounded-pill">
-          <i class="fa-solid fa-pen-to-square me-1"></i> Edit Project
+        <a href="{% url 'projects:project_edit' pk=project.pk %}" class="btn btn-outline-secondary btn-sm rounded-pill px-3">
+          <i class="fa-solid fa-pen-to-square me-1"></i> {% translate "Edit Project" %}
         </a>
         {% if project.status == 'running' and project.can_be_cancelled %}
-          <a href="{% url 'projects:project_cancel' pk=project.pk %}" class="btn btn-outline-danger btn-sm rounded-pill">
-            <i class="fa-solid fa-ban me-1"></i> Cancel Campaign
+          <a href="{% url 'projects:project_cancel' pk=project.pk %}" class="btn btn-outline-danger btn-sm rounded-pill px-3">
+            <i class="fa-solid fa-ban me-1"></i> {% translate "Cancel Campaign" %}
           </a>
         {% endif %}
       {% endif %}
 
       {% if user.is_authenticated and user != project.creator %}
-        <button type="button" class="btn btn-outline-danger btn-sm rounded-pill" data-bs-toggle="modal" data-bs-target="#reportProjectModal">
-          <i class="fa-regular fa-flag me-1"></i> Report
+        <button type="button" class="btn btn-outline-danger btn-sm rounded-pill px-3" data-bs-toggle="modal" data-bs-target="#reportProjectModal">
+          <i class="fa-regular fa-flag me-1"></i> {% translate "Report" %}
         </button>
       {% endif %}
     </div>
   </div>
 
+  <!-- =========================================================================
+       MAIN TWO-COLUMN HERO: Left (Media & Summary) | Right (Prominent Donate Card)
+       ========================================================================= -->
   <div class="row g-4 mb-5">
-    <!-- Left Column: Carousel & Project Content -->
-    <div class="col-lg-8">
-      <!-- Title & Category Badges -->
+    
+    <!-- LEFT COLUMN: Title, Badges, Media Gallery & Summary Preview -->
+    <div class="col-lg-7">
       <div class="mb-3">
         <div class="d-flex flex-wrap align-items-center gap-2 mb-2">
           <a href="{% url 'projects:category_projects' slug=project.category.slug %}" class="badge bg-primary text-decoration-none px-3 py-2 rounded-pill">
             <i class="fa-solid fa-tag me-1"></i> {{ project.category.name }}
           </a>
           {% if project.is_featured %}
-            <span class="badge bg-warning text-dark px-3 py-2 rounded-pill">
-              <i class="fa-solid fa-star me-1"></i> Featured
+            <span class="badge bg-warning text-dark px-3 py-2 rounded-pill shadow-sm">
+              <i class="fa-solid fa-star me-1"></i> {% translate "Featured" %}
             </span>
           {% endif %}
           <span class="badge {% if project.status == 'running' %}bg-success{% elif project.status == 'cancelled' %}bg-danger{% elif project.status == 'completed' %}bg-info{% else %}bg-secondary{% endif %} px-3 py-2 rounded-pill">
-            Status: {{ project.status|title }}
+            {% translate "Status:" %} {{ project.status|title }}
           </span>
         </div>
-        <h1 class="fw-bold mb-2">{{ project.title }}</h1>
-        <div class="d-flex align-items-center gap-3 text-muted small">
+
+        <h1 class="fw-bold mb-2 brand-font text-dark display-6">{{ project.title }}</h1>
+        
+        <div class="d-flex flex-wrap align-items-center gap-3 text-muted small mb-3">
           <div>
-            <i class="fa-regular fa-user text-primary me-1"></i> By <strong>{{ project.creator.get_full_name }}</strong>
+            <i class="fa-regular fa-user text-primary me-1"></i> {% translate "By" %} <strong>{{ project.creator.get_full_name }}</strong>
           </div>
           <div>
-            <i class="fa-regular fa-calendar text-primary me-1"></i> Created {{ project.created_at|date:"M d, Y" }}
+            <i class="fa-regular fa-calendar text-primary me-1"></i> {{ project.start_time|date:"M d, Y" }}
+          </div>
+          <div>
+            <i class="fa-solid fa-star text-warning me-1"></i> <strong>{{ project.average_rating }}</strong> / 5.0 ({{ project.ratings_count }} {% translate "reviews" %})
           </div>
         </div>
+
+        <!-- Short Description / Summary -->
+        <p class="text-secondary lead fs-6 mb-4" style="line-height: 1.7;">
+          {{ project.details|truncatechars:220 }}
+        </p>
       </div>
 
-      <!-- Multiple Pictures Slider (Carousel) -->
-      <div class="mb-4">
+      <!-- Multiple Pictures Gallery / Carousel -->
+      <div class="card border-0 shadow-sm rounded-4 overflow-hidden mb-4 bg-white">
         {% if project.images.all %}
           <div id="projectImagesCarousel" class="carousel slide project-detail-carousel" data-bs-ride="carousel">
             <div class="carousel-indicators">
@@ -78,7 +139,7 @@
             <div class="carousel-inner">
               {% for img in project.images.all %}
                 <div class="carousel-item {% if forloop.first %}active{% endif %}">
-                  <img src="{{ img.image.url }}" class="d-block w-100" alt="{{ project.title }}">
+                  <img src="{{ img.image.url }}" class="d-block w-100 object-fit-cover" style="max-height: 420px;" alt="{{ project.title }}">
                 </div>
               {% endfor %}
             </div>
@@ -92,24 +153,145 @@
             {% endif %}
           </div>
         {% else %}
-          <div class="p-5 text-center bg-light rounded-4 border text-muted">
+          <div class="p-5 text-center bg-light text-muted">
             <i class="fa-solid fa-image fs-1 mb-2 opacity-50"></i>
-            <p>No images uploaded for this campaign.</p>
+            <p class="mb-0 small">{% translate "No additional photos uploaded for this campaign." %}</p>
           </div>
         {% endif %}
       </div>
+    </div>
 
-      <!-- Project Story / Details -->
-      <div class="card border-0 shadow-sm rounded-4 p-4 mb-4">
-        <h4 class="fw-bold mb-3"><i class="fa-solid fa-align-left me-2 text-primary"></i> About This Campaign</h4>
-        <div class="project-story text-secondary fs-6" style="line-height: 1.8; white-space: pre-line;">
+    <!-- RIGHT COLUMN: PROMINENT DONATION CARD -->
+    <div class="col-lg-5">
+      <div class="card border-0 shadow-lg rounded-4 p-4 p-lg-4 bg-white sticky-top donation-hero-card" style="top: 85px; z-index: 10;">
+        <div style="height: 4px; background: linear-gradient(90deg, var(--primary, #0f9d8d), #10b981); margin: -1.5rem -1.5rem 1.5rem -1.5rem; border-top-left-radius: 1rem; border-top-right-radius: 1rem;"></div>
+
+        <!-- Raised vs Goal -->
+        <div class="d-flex justify-content-between align-items-baseline mb-2">
+          <div>
+            <span class="text-muted small text-uppercase fw-bold d-block mb-1">{% translate "Raised" %}</span>
+            <h2 class="fw-bold text-success mb-0 brand-font display-6">{{ project.total_donations|floatformat:0|intcomma }} <small class="fs-6 text-muted fw-normal">{% translate "EGP" %}</small></h2>
+          </div>
+          <div class="text-end">
+            <span class="text-muted small text-uppercase fw-bold d-block mb-1">{% translate "Goal" %}</span>
+            <h4 class="fw-bold text-dark mb-0 brand-font">{{ project.total_target|floatformat:0|intcomma }} <small class="fs-6 text-muted fw-normal">{% translate "EGP" %}</small></h4>
+          </div>
+        </div>
+
+        <!-- Progress Bar -->
+        <div class="custom-progress my-3" style="height: 12px; border-radius: 999px; background: #e2e8f0;">
+          <div class="custom-progress-bar rounded-pill" role="progressbar" style="width: {{ project.donation_progress_percentage }}%; background: linear-gradient(90deg, var(--primary, #0f9d8d), #10b981);" aria-valuenow="{{ project.donation_progress_percentage }}" aria-valuemin="0" aria-valuemax="100"></div>
+        </div>
+
+        <!-- Progress % & Remaining Info -->
+        <div class="d-flex justify-content-between align-items-center small fw-semibold mb-3">
+          <span class="text-primary font-monospace">{{ project.donation_progress_percentage }}% {% translate "funded" %}</span>
+          <span class="text-muted">{{ project.remaining_target|floatformat:0|intcomma }} {% translate "EGP remaining" %}</span>
+        </div>
+
+        <!-- Metrics Row -->
+        <div class="row g-2 text-center small py-2 bg-light rounded-3 mb-4">
+          <div class="col-6 border-end">
+            <strong class="d-block fs-6 text-dark">{{ project.donations.count }}</strong>
+            <span class="text-muted">{% translate "Supporters" %}</span>
+          </div>
+          <div class="col-6">
+            <strong class="d-block fs-6 text-dark">{{ project.end_time|date:"M d, Y" }}</strong>
+            <span class="text-muted">{% translate "Deadline" %}</span>
+          </div>
+        </div>
+
+        <!-- Donation Form -->
+        {% if project.status == 'running' and not project.is_expired %}
+          {% if user.is_authenticated %}
+            <form action="{% url 'projects:donate' pk=project.pk %}" method="POST" class="mb-3">
+              {% csrf_token %}
+              <label class="form-label fw-bold text-dark small mb-2 d-flex justify-content-between">
+                <span>{% translate "Select Amount:" %}</span>
+                <span class="text-muted fw-normal">{% translate "EGP" %}</span>
+              </label>
+
+              <!-- Quick Preset Amount Buttons -->
+              <div class="d-flex gap-2 mb-3">
+                <button type="button" class="btn btn-outline-primary btn-sm flex-grow-1 rounded-pill quick-donation-btn py-1" data-amount="100">100 {% translate "EGP" %}</button>
+                <button type="button" class="btn btn-outline-primary btn-sm flex-grow-1 rounded-pill quick-donation-btn py-1" data-amount="250">250 {% translate "EGP" %}</button>
+                <button type="button" class="btn btn-outline-primary btn-sm flex-grow-1 rounded-pill quick-donation-btn py-1" data-amount="500">500 {% translate "EGP" %}</button>
+                <button type="button" class="btn btn-outline-primary btn-sm flex-grow-1 rounded-pill quick-donation-btn py-1" data-amount="1000">1000 {% translate "EGP" %}</button>
+              </div>
+
+              <!-- Input with EGP Addon -->
+              <div class="input-group input-group-lg mb-3 rounded-pill overflow-hidden border shadow-sm">
+                {{ donation_form.amount }}
+                <span class="input-group-text bg-light border-0 fw-bold text-muted px-3" style="font-size: 0.95rem;">{% translate "EGP" %}</span>
+              </div>
+
+              <!-- Strong Teal Donate Now CTA Button -->
+              <button type="submit" class="btn btn-primary btn-lg rounded-pill w-100 fw-bold shadow-sm py-3 d-flex align-items-center justify-content-center gap-2 donate-cta-btn">
+                <i class="fa-solid fa-heart text-danger"></i> {% translate "Donate Now" %}
+              </button>
+            </form>
+          {% else %}
+            <div class="text-center p-3 bg-light rounded-4 border mb-3">
+              <i class="fa-solid fa-lock text-primary fs-4 mb-2"></i>
+              <h6 class="fw-bold mb-1">{% translate "Log in to support this cause" %}</h6>
+              <p class="text-muted small mb-3">{% translate "Support verified Egyptian innovations directly." %}</p>
+              <a href="{% url 'accounts:login' %}?next={{ request.path }}" class="btn btn-primary btn-lg rounded-pill w-100 fw-bold shadow-sm">
+                <i class="fa-solid fa-arrow-right-to-bracket me-1"></i> {% translate "Log In to Donate" %}
+              </a>
+            </div>
+          {% endif %}
+        {% else %}
+          <div class="alert alert-secondary text-center p-3 rounded-4 mb-3">
+            <i class="fa-solid fa-circle-info fs-4 text-muted mb-1 d-block"></i>
+            <h6 class="fw-bold mb-1">{% translate "Campaign Closed" %}</h6>
+            <p class="small text-muted mb-0">{% translate "This campaign is no longer accepting donations." %}</p>
+          </div>
+        {% endif %}
+
+        <!-- Trust Badges & Organizer Mini-Card -->
+        <div class="border-top pt-3 mt-1">
+          <div class="d-flex align-items-center gap-3">
+            {% if project.creator.profile_picture %}
+              <img src="{{ project.creator.profile_picture.url }}" alt="{{ project.creator.first_name }}" class="rounded-circle object-fit-cover shadow-sm border" width="42" height="42">
+            {% else %}
+              <div class="bg-primary text-white rounded-circle d-flex align-items-center justify-content-center shadow-sm fw-bold" style="width: 42px; height: 42px; background: var(--primary, #0f9d8d) !important;">
+                {{ project.creator.first_name|first|upper }}
+              </div>
+            {% endif %}
+            <div class="flex-grow-1 text-truncate">
+              <small class="text-muted d-block" style="font-size: 0.75rem;">{% translate "Campaign Organizer" %}</small>
+              <span class="fw-bold text-dark d-block text-truncate small">{{ project.creator.get_full_name }}</span>
+            </div>
+            <span class="badge bg-light text-success border rounded-pill px-2 py-1 small">
+              <i class="fa-solid fa-check-circle me-1"></i> {% translate "Verified" %}
+            </span>
+          </div>
+        </div>
+
+      </div>
+    </div>
+
+  </div>
+
+  <!-- =========================================================================
+       SECTION 2: Detailed Story, Rating Widget, Comments & Replies
+       ========================================================================= -->
+  <div class="row g-4 mb-5">
+    <div class="col-lg-8">
+      
+      <!-- Full Story & Details -->
+      <div class="card border-0 shadow-sm rounded-4 p-4 p-lg-5 mb-4 bg-white">
+        <h4 class="fw-bold mb-3 brand-font">
+          <i class="fa-solid fa-align-left me-2 text-primary"></i> {% translate "About this Campaign" %}
+        </h4>
+        <div class="project-story text-secondary fs-6" style="line-height: 1.9; white-space: pre-line;">
           {{ project.details }}
         </div>
 
         <!-- Tags -->
         {% if project.tags.all %}
           <div class="mt-4 pt-3 border-top">
-            <h6 class="fw-bold mb-2"><i class="fa-solid fa-tags me-1 text-primary"></i> Tags:</h6>
+            <h6 class="fw-bold mb-2 small text-muted"><i class="fa-solid fa-tags me-1 text-primary"></i> {% translate "Tags:" %}</h6>
             <div class="d-flex flex-wrap gap-1">
               {% for tag in project.tags.all %}
                 <a href="{% url 'projects:project_list' %}?tag={{ tag.slug }}" class="tag-badge">
@@ -122,10 +304,10 @@
       </div>
 
       <!-- Rating Section -->
-      <div class="card border-0 shadow-sm rounded-4 p-4 mb-4">
+      <div class="card border-0 shadow-sm rounded-4 p-4 mb-4 bg-white">
         <div class="d-flex flex-column flex-md-row justify-content-between align-items-md-center gap-3">
           <div>
-            <h5 class="fw-bold mb-1"><i class="fa-solid fa-star text-warning me-2"></i> Project Rating</h5>
+            <h5 class="fw-bold mb-1 brand-font"><i class="fa-solid fa-star text-warning me-2"></i> {% translate "Project Rating" %}</h5>
             <div class="d-flex align-items-center gap-2">
               <span class="fs-4 fw-bold text-dark">{{ project.average_rating }}</span>
               <div class="rating-stars-display fs-5">
@@ -137,37 +319,63 @@
                   <i class="fa-solid fa-star {% if avg >= 5 %}text-warning{% else %}text-muted opacity-25{% endif %}"></i>
                 {% endwith %}
               </div>
-              <span class="text-muted small">({{ project.ratings_count }} ratings)</span>
+              <span class="text-muted small">({{ project.ratings_count }} {% translate "ratings" %})</span>
             </div>
           </div>
 
-          <!-- Rate this project widget -->
-          <div>
+          <!-- Rate widget -->
+          <div class="text-sm-end">
             {% if user.is_authenticated %}
-              <form action="{% url 'projects:rate_project' pk=project.pk %}" method="POST" class="d-flex align-items-center gap-2">
-                {% csrf_token %}
-                <span class="small fw-semibold text-muted">{% if user_rating %}Your rating:{% else %}Rate:{% endif %}</span>
-                <div class="rating-stars-input">
-                  <input type="radio" id="star5" name="score" value="5" {% if user_rating.score == 5 %}checked{% endif %}><label for="star5" title="5 stars">&#9733;</label>
-                  <input type="radio" id="star4" name="score" value="4" {% if user_rating.score == 4 %}checked{% endif %}><label for="star4" title="4 stars">&#9733;</label>
-                  <input type="radio" id="star3" name="score" value="3" {% if user_rating.score == 3 %}checked{% endif %}><label for="star3" title="3 stars">&#9733;</label>
-                  <input type="radio" id="star2" name="score" value="2" {% if user_rating.score == 2 %}checked{% endif %}><label for="star2" title="2 stars">&#9733;</label>
-                  <input type="radio" id="star1" name="score" value="1" {% if user_rating.score == 1 %}checked{% endif %}><label for="star1" title="1 star">&#9733;</label>
-                </div>
-              </form>
+              <div class="d-flex flex-column align-items-sm-end gap-2">
+                <form action="{% url 'projects:rate_project' pk=project.pk %}" method="POST" id="tamweelRatingForm" class="d-flex flex-column flex-sm-row align-items-sm-center gap-2">
+                  {% csrf_token %}
+                  <input type="hidden" name="score" id="selected-rating-input" value="{% if user_rating %}{{ user_rating.score }}{% endif %}">
+                  <span class="small fw-semibold text-muted" id="ratingLabelSpan">
+                    {% if user_rating %}{% translate "Your rating:" %}{% else %}{% translate "Rate this campaign:" %}{% endif %}
+                  </span>
+                  <div class="tamweel-star-rating" id="tamweelStarRating" data-initial-rating="{% if user_rating %}{{ user_rating.score }}{% else %}0{% endif %}" role="radiogroup" aria-label="{% translate 'Rate this campaign' %}">
+                    <button type="button" class="star-rating-btn" data-value="1" aria-label="Rate 1 star" title="1 star">
+                      <i class="fa-solid fa-star"></i>
+                    </button>
+                    <button type="button" class="star-rating-btn" data-value="2" aria-label="Rate 2 stars" title="2 stars">
+                      <i class="fa-solid fa-star"></i>
+                    </button>
+                    <button type="button" class="star-rating-btn" data-value="3" aria-label="Rate 3 stars" title="3 stars">
+                      <i class="fa-solid fa-star"></i>
+                    </button>
+                    <button type="button" class="star-rating-btn" data-value="4" aria-label="Rate 4 stars" title="4 stars">
+                      <i class="fa-solid fa-star"></i>
+                    </button>
+                    <button type="button" class="star-rating-btn" data-value="5" aria-label="Rate 5 stars" title="5 stars">
+                      <i class="fa-solid fa-star"></i>
+                    </button>
+                  </div>
+                </form>
+
+                {% if user_rating %}
+                  <div>
+                    <button type="button" class="btn btn-link text-danger p-0 small text-decoration-none remove-rating-btn" data-bs-toggle="modal" data-bs-target="#removeRatingModal" title="{% translate 'Remove your rating' %}">
+                      <i class="fa-solid fa-trash-can me-1" style="font-size: 0.75rem;"></i> {% translate "Remove Rating" %}
+                    </button>
+                  </div>
+                {% endif %}
+              </div>
             {% else %}
-              <a href="{% url 'accounts:login' %}?next={{ request.path }}" class="btn btn-outline-secondary btn-sm rounded-pill">
-                Log in to Rate
-              </a>
+              <div class="d-flex align-items-center gap-2">
+                <span class="small fw-semibold text-muted">{% translate "Rate this campaign:" %}</span>
+                <a href="{% url 'accounts:login' %}?next={{ request.path }}" class="btn btn-outline-secondary btn-sm rounded-pill px-3">
+                  <i class="fa-regular fa-star me-1"></i> {% translate "Log in to Rate" %}
+                </a>
+              </div>
             {% endif %}
           </div>
         </div>
       </div>
 
       <!-- Comments & Replies Section -->
-      <div class="card border-0 shadow-sm rounded-4 p-4 mb-4">
-        <h4 class="fw-bold mb-4">
-          <i class="fa-solid fa-comments me-2 text-primary"></i> Comments ({{ comments.count }})
+      <div class="card border-0 shadow-sm rounded-4 p-4 p-lg-5 mb-4 bg-white">
+        <h4 class="fw-bold mb-4 brand-font">
+          <i class="fa-solid fa-comments me-2 text-primary"></i> {% translate "Comments" %} ({{ comments.count }})
         </h4>
 
         <!-- Post Comment Form -->
@@ -178,14 +386,14 @@
               {{ comment_form.content }}
             </div>
             <div class="d-flex justify-content-end">
-              <button type="submit" class="btn btn-primary rounded-pill px-4 btn-sm fw-semibold">
-                Post Comment
+              <button type="submit" class="btn btn-primary rounded-pill px-4 btn-sm fw-semibold shadow-sm">
+                {% translate "Post Comment" %}
               </button>
             </div>
           </form>
         {% else %}
-          <div class="alert alert-light border text-center mb-4">
-            <a href="{% url 'accounts:login' %}?next={{ request.path }}" class="fw-bold text-primary">Log in</a> to leave a comment or ask a question.
+          <div class="alert alert-light border text-center mb-4 rounded-3">
+            <a href="{% url 'accounts:login' %}?next={{ request.path }}" class="fw-bold text-primary">{% translate "Login" %}</a> {% translate "to leave a comment or ask a question." %}
           </div>
         {% endif %}
 
@@ -204,16 +412,23 @@
                   {% endif %}
                   <div>
                     <h6 class="fw-bold mb-0">{{ comment.user.get_full_name }}</h6>
-                    <small class="text-muted">{{ comment.created_at|timesince }} ago</small>
+                    <small class="text-muted">{{ comment.created_at|timesince }} {% translate "ago" %}</small>
                   </div>
                 </div>
 
-                <!-- Report Comment Action -->
-                {% if user.is_authenticated and user != comment.user %}
-                  <button type="button" class="btn btn-link text-muted p-0 small text-decoration-none" data-bs-toggle="modal" data-bs-target="#reportCommentModal{{ comment.pk }}">
-                    <i class="fa-regular fa-flag"></i>
-                  </button>
-                {% endif %}
+                <!-- Comment Actions (Report / Delete) -->
+                <div class="d-flex align-items-center gap-2">
+                  {% if user.is_authenticated and user != comment.user %}
+                    <button type="button" class="btn btn-link text-muted p-0 small text-decoration-none" data-bs-toggle="modal" data-bs-target="#reportCommentModal{{ comment.pk }}" title="{% translate 'Report Comment' %}">
+                      <i class="fa-regular fa-flag"></i>
+                    </button>
+                  {% endif %}
+                  {% if user.is_authenticated and user == comment.user or user.is_staff or user.is_superuser %}
+                    <button type="button" class="btn btn-link text-danger p-0 small text-decoration-none" data-bs-toggle="modal" data-bs-target="#deleteCommentModal{{ comment.pk }}" title="{% translate 'Delete Comment' %}">
+                      <i class="fa-solid fa-trash-can"></i>
+                    </button>
+                  {% endif %}
+                </div>
               </div>
 
               <p class="mb-2 text-dark">{{ comment.content }}</p>
@@ -221,7 +436,7 @@
               <!-- Reply Button & Box -->
               {% if user.is_authenticated %}
                 <button type="button" class="btn btn-link btn-sm text-primary p-0 text-decoration-none fw-semibold reply-toggle-btn" data-comment-id="{{ comment.pk }}">
-                  <i class="fa-solid fa-reply me-1"></i> Reply
+                  <i class="fa-solid fa-reply me-1"></i> {% translate "Reply" %}
                 </button>
 
                 <!-- Hidden Reply Form -->
@@ -230,10 +445,10 @@
                     {% csrf_token %}
                     <input type="hidden" name="parent_id" value="{{ comment.pk }}">
                     <div class="mb-2">
-                      <textarea name="content" class="form-control form-control-sm" rows="2" placeholder="Write a reply..." required></textarea>
+                      <textarea name="content" class="form-control form-control-sm" rows="2" placeholder="{% translate 'Write a reply...' %}" required></textarea>
                     </div>
                     <div class="d-flex justify-content-end gap-2">
-                      <button type="submit" class="btn btn-primary btn-sm rounded-pill px-3">Send Reply</button>
+                      <button type="submit" class="btn btn-primary btn-sm rounded-pill px-3">{% translate "Send Reply" %}</button>
                     </div>
                   </form>
                 </div>
@@ -250,15 +465,120 @@
                             {{ reply.user.first_name|first|upper }}
                           </span>
                           <span class="fw-bold small">{{ reply.user.get_full_name }}</span>
-                          <small class="text-muted" style="font-size: 0.75rem;">{{ reply.created_at|timesince }} ago</small>
+                          <small class="text-muted" style="font-size: 0.75rem;">{{ reply.created_at|timesince }} {% translate "ago" %}</small>
+                        </div>
+                        <div class="d-flex align-items-center gap-2">
+                          {% if user.is_authenticated and user != reply.user %}
+                            <button type="button" class="btn btn-link text-muted p-0 small text-decoration-none" data-bs-toggle="modal" data-bs-target="#reportCommentModal{{ reply.pk }}" title="{% translate 'Report Reply' %}">
+                              <i class="fa-regular fa-flag"></i>
+                            </button>
+                          {% endif %}
+                          {% if user.is_authenticated and user == reply.user or user.is_staff or user.is_superuser %}
+                            <button type="button" class="btn btn-link text-danger p-0 small text-decoration-none" data-bs-toggle="modal" data-bs-target="#deleteCommentModal{{ reply.pk }}" title="{% translate 'Delete Reply' %}">
+                              <i class="fa-solid fa-trash-can"></i>
+                            </button>
+                          {% endif %}
                         </div>
                       </div>
                       <p class="mb-0 small text-secondary">{{ reply.content }}</p>
                     </div>
+
+                    <!-- Delete Reply Modal -->
+                    {% if user.is_authenticated and user == reply.user or user.is_staff or user.is_superuser %}
+                      <div class="modal fade" id="deleteCommentModal{{ reply.pk }}" tabindex="-1" aria-hidden="true">
+                        <div class="modal-dialog modal-dialog-centered" style="max-width: 420px;">
+                          <div class="modal-content border-0 shadow-lg rounded-4 overflow-hidden">
+                            <div class="modal-header bg-danger text-white py-3 px-4">
+                              <h5 class="modal-title fw-bold fs-6 mb-0">
+                                <i class="fa-solid fa-trash-can me-2"></i> {% translate "Delete Reply" %}
+                              </h5>
+                              <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal" aria-label="Close"></button>
+                            </div>
+                            <div class="modal-body p-4 text-center">
+                              <div class="rounded-circle bg-danger bg-opacity-10 d-inline-flex align-items-center justify-content-center mb-3" style="width: 56px; height: 56px;">
+                                <i class="fa-solid fa-triangle-exclamation fs-3 text-danger"></i>
+                              </div>
+                              <h5 class="fw-bold text-dark mb-2">{% translate "Delete this reply?" %}</h5>
+                              <p class="text-secondary small mb-0">
+                                {% translate "This action cannot be undone and will permanently remove your reply." %}
+                              </p>
+                            </div>
+                            <div class="modal-footer bg-light px-4 py-3 border-0 d-flex justify-content-end gap-2">
+                              <button type="button" class="btn btn-light rounded-pill px-4" data-bs-dismiss="modal">{% translate "Cancel" %}</button>
+                              <form method="POST" action="{% url 'projects:delete_comment' pk=project.pk comment_id=reply.pk %}">
+                                {% csrf_token %}
+                                <button type="submit" class="btn btn-danger rounded-pill px-4 fw-semibold shadow-sm">
+                                  <i class="fa-solid fa-trash-can me-1"></i> {% translate "Delete Reply" %}
+                                </button>
+                              </form>
+                            </div>
+                          </div>
+                        </div>
+                      </div>
+                    {% endif %}
+
+                    <!-- Report Reply Modal -->
+                    {% if user.is_authenticated and user != reply.user %}
+                      <div class="modal fade" id="reportCommentModal{{ reply.pk }}" tabindex="-1" aria-hidden="true">
+                        <div class="modal-dialog">
+                          <div class="modal-content border-0 shadow-lg rounded-4">
+                            <form action="{% url 'projects:report_comment' pk=project.pk comment_id=reply.pk %}" method="POST">
+                              {% csrf_token %}
+                              <div class="modal-header bg-danger text-white">
+                                <h5 class="modal-title fw-bold"><i class="fa-solid fa-flag me-2"></i> {% translate "Report Reply" %}</h5>
+                                <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal"></button>
+                              </div>
+                              <div class="modal-body p-4">
+                                <p class="small text-muted">{% translate "Why are you reporting this reply?" %}</p>
+                                <textarea name="reason" class="form-control" rows="3" placeholder="{% translate 'Explain the violation...' %}" required></textarea>
+                              </div>
+                              <div class="modal-footer">
+                                <button type="button" class="btn btn-light rounded-pill" data-bs-dismiss="modal">{% translate "Cancel" %}</button>
+                                <button type="submit" class="btn btn-danger rounded-pill px-4">{% translate "Submit Report" %}</button>
+                              </div>
+                            </form>
+                          </div>
+                        </div>
+                      </div>
+                    {% endif %}
                   {% endfor %}
                 </div>
               {% endif %}
             </div>
+
+            <!-- Delete Comment Modal -->
+            {% if user.is_authenticated and user == comment.user or user.is_staff or user.is_superuser %}
+              <div class="modal fade" id="deleteCommentModal{{ comment.pk }}" tabindex="-1" aria-hidden="true">
+                <div class="modal-dialog modal-dialog-centered" style="max-width: 420px;">
+                  <div class="modal-content border-0 shadow-lg rounded-4 overflow-hidden">
+                    <div class="modal-header bg-danger text-white py-3 px-4">
+                      <h5 class="modal-title fw-bold fs-6 mb-0">
+                        <i class="fa-solid fa-trash-can me-2"></i> {% translate "Delete Comment" %}
+                      </h5>
+                      <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal" aria-label="Close"></button>
+                    </div>
+                    <div class="modal-body p-4 text-center">
+                      <div class="rounded-circle bg-danger bg-opacity-10 d-inline-flex align-items-center justify-content-center mb-3" style="width: 56px; height: 56px;">
+                        <i class="fa-solid fa-triangle-exclamation fs-3 text-danger"></i>
+                      </div>
+                      <h5 class="fw-bold text-dark mb-2">{% translate "Delete this comment?" %}</h5>
+                      <p class="text-secondary small mb-0">
+                        {% translate "This action cannot be undone and will permanently remove this comment" %}{% if comment.replies.exists %} {% translate "and its replies" %}{% endif %}.
+                      </p>
+                    </div>
+                    <div class="modal-footer bg-light px-4 py-3 border-0 d-flex justify-content-end gap-2">
+                      <button type="button" class="btn btn-light rounded-pill px-4" data-bs-dismiss="modal">{% translate "Cancel" %}</button>
+                      <form method="POST" action="{% url 'projects:delete_comment' pk=project.pk comment_id=comment.pk %}">
+                        {% csrf_token %}
+                        <button type="submit" class="btn btn-danger rounded-pill px-4 fw-semibold shadow-sm">
+                          <i class="fa-solid fa-trash-can me-1"></i> {% translate "Delete Comment" %}
+                        </button>
+                      </form>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            {% endif %}
 
             <!-- Report Comment Modal -->
             {% if user.is_authenticated and user != comment.user %}
@@ -268,16 +588,16 @@
                     <form action="{% url 'projects:report_comment' pk=project.pk comment_id=comment.pk %}" method="POST">
                       {% csrf_token %}
                       <div class="modal-header bg-danger text-white">
-                        <h5 class="modal-title fw-bold"><i class="fa-solid fa-flag me-2"></i> Report Comment</h5>
+                        <h5 class="modal-title fw-bold"><i class="fa-solid fa-flag me-2"></i> {% translate "Report Comment" %}</h5>
                         <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal"></button>
                       </div>
                       <div class="modal-body p-4">
-                        <p class="small text-muted">Why are you reporting this comment?</p>
-                        <textarea name="reason" class="form-control" rows="3" placeholder="Explain the violation..." required></textarea>
+                        <p class="small text-muted">{% translate "Why are you reporting this comment?" %}</p>
+                        <textarea name="reason" class="form-control" rows="3" placeholder="{% translate 'Explain the violation...' %}" required></textarea>
                       </div>
                       <div class="modal-footer">
-                        <button type="button" class="btn btn-light rounded-pill" data-bs-dismiss="modal">Cancel</button>
-                        <button type="submit" class="btn btn-danger rounded-pill px-4">Submit Report</button>
+                        <button type="button" class="btn btn-light rounded-pill" data-bs-dismiss="modal">{% translate "Cancel" %}</button>
+                        <button type="submit" class="btn btn-danger rounded-pill px-4">{% translate "Submit Report" %}</button>
                       </div>
                     </form>
                   </div>
@@ -285,112 +605,23 @@
               </div>
             {% endif %}
           {% empty %}
-            <p class="text-muted text-center py-3 mb-0">No comments yet. Start the conversation!</p>
+            <p class="text-muted text-center py-3 mb-0">{% translate "No comments yet. Start the conversation!" %}</p>
           {% endfor %}
         </div>
       </div>
+
+
     </div>
 
-    <!-- Right Column: Fundraising Stats & Donation Form -->
+    <!-- Right Column Bottom: Safety & Platform Trust Info -->
     <div class="col-lg-4">
-      <div class="card border-0 shadow-lg rounded-4 p-4 sticky-top" style="top: 90px; z-index: 10;">
-        <!-- Target & Raised Stats -->
-        <div class="mb-3">
-          <span class="text-muted small text-uppercase fw-bold">Total Raised</span>
-          <div class="d-flex align-items-baseline gap-2">
-            <h2 class="fw-bold text-success mb-0">{{ project.total_donations|floatformat:0 }} EGP</h2>
-          </div>
-          <p class="text-muted small mb-2">pledged of <strong>{{ project.total_target|floatformat:0 }} EGP</strong> goal</p>
-
-          <div class="custom-progress mb-3">
-            <div class="custom-progress-bar" role="progressbar" style="width: {{ project.donation_progress_percentage }}%;"></div>
-          </div>
-
-          <div class="row g-2 text-center small py-2 bg-light rounded-3">
-            <div class="col-4 border-end">
-              <strong class="d-block fs-6 text-dark">{{ project.donation_progress_percentage }}%</strong>
-              <span class="text-muted">Funded</span>
-            </div>
-            <div class="col-4 border-end">
-              <strong class="d-block fs-6 text-dark">{{ project.donations.count }}</strong>
-              <span class="text-muted">Donations</span>
-            </div>
-            <div class="col-4">
-              <strong class="d-block fs-6 text-dark">{{ project.remaining_target|floatformat:0 }}</strong>
-              <span class="text-muted">EGP Left</span>
-            </div>
-          </div>
-        </div>
-
-        <!-- Campaign Duration Timeline -->
-        <div class="small text-muted mb-4">
-          <div class="d-flex justify-content-between py-1">
-            <span><i class="fa-solid fa-play text-primary me-1"></i> Start Date:</span>
-            <strong>{{ project.start_time|date:"M d, Y" }}</strong>
-          </div>
-          <div class="d-flex justify-content-between py-1">
-            <span><i class="fa-solid fa-flag-checkered text-danger me-1"></i> End Date:</span>
-            <strong>{{ project.end_time|date:"M d, Y" }}</strong>
-          </div>
-          <div class="d-flex justify-content-between py-1">
-            <span><i class="fa-solid fa-hourglass-half text-warning me-1"></i> Campaign Status:</span>
-            <strong class="{% if project.status == 'running' %}text-success{% else %}text-danger{% endif %}">{{ project.status|title }}</strong>
-          </div>
-        </div>
-
-        <!-- Donation Form / Button -->
-        {% if project.status == 'running' and not project.is_expired %}
-          {% if user.is_authenticated %}
-            <form action="{% url 'projects:donate' pk=project.pk %}" method="POST" class="mb-3">
-              {% csrf_token %}
-              <label class="form-label fw-bold small">Select or Enter Donation Amount (EGP):</label>
-              
-              <!-- Quick Preset Buttons -->
-              <div class="d-flex gap-2 mb-3">
-                <button type="button" class="btn btn-outline-primary btn-sm flex-grow-1 rounded-pill quick-donation-btn" data-amount="100">100 EGP</button>
-                <button type="button" class="btn btn-outline-primary btn-sm flex-grow-1 rounded-pill quick-donation-btn" data-amount="250">250 EGP</button>
-                <button type="button" class="btn btn-outline-primary btn-sm flex-grow-1 rounded-pill quick-donation-btn" data-amount="500">500 EGP</button>
-                <button type="button" class="btn btn-outline-primary btn-sm flex-grow-1 rounded-pill quick-donation-btn" data-amount="1000">1000 EGP</button>
-              </div>
-
-              <div class="mb-3">
-                {{ donation_form.amount }}
-              </div>
-
-              <button type="submit" class="btn btn-success btn-lg rounded-pill w-100 fw-bold shadow-sm">
-                <i class="fa-solid fa-hand-holding-heart me-1"></i> Donate to Campaign
-              </button>
-            </form>
-          {% else %}
-            <div class="d-grid mb-3">
-              <a href="{% url 'accounts:login' %}?next={{ request.path }}" class="btn btn-success btn-lg rounded-pill fw-bold shadow-sm">
-                <i class="fa-solid fa-arrow-right-to-bracket me-1"></i> Log In to Donate
-              </a>
-            </div>
-          {% endif %}
-        {% else %}
-          <div class="alert alert-secondary text-center small mb-3">
-            <i class="fa-solid fa-circle-exclamation me-1"></i> This campaign is no longer accepting donations.
-          </div>
-        {% endif %}
-
-        <!-- Creator Profile Mini-Card -->
-        <div class="border-top pt-3 mt-2">
-          <div class="d-flex align-items-center gap-3">
-            {% if project.creator.profile_picture %}
-              <img src="{{ project.creator.profile_picture.url }}" alt="{{ project.creator.first_name }}" class="rounded-circle object-fit-cover" width="48" height="48">
-            {% else %}
-              <div class="bg-primary text-white rounded-circle d-flex align-items-center justify-content-center" style="width: 48px; height: 48px; font-weight: bold;">
-                {{ project.creator.first_name|first|upper }}
-              </div>
-            {% endif %}
-            <div>
-              <small class="text-muted d-block">Campaign Organizer</small>
-              <h6 class="fw-bold mb-0">{{ project.creator.get_full_name }}</h6>
-              <small class="text-muted"><i class="fa-solid fa-location-dot me-1 text-danger"></i> {{ project.creator.country|default:'Egypt' }}</small>
-            </div>
-          </div>
-        </div>
+      <div class="card border-0 shadow-sm rounded-4 p-4 bg-white mb-4">
+        <h6 class="fw-bold mb-3 brand-font"><i class="fa-solid fa-shield-halved text-success me-2"></i> {% translate "Tamweel Guarantee" %}</h6>
+        <ul class="list-unstyled small text-muted mb-0 d-flex flex-column gap-2">
+          <li><i class="fa-solid fa-check text-success me-2"></i> {% translate "100% of your donation reaches the campaign." %}</li>
+          <li><i class="fa-solid fa-check text-success me-2"></i> {% translate "Secure local Egyptian payment methods." %}</li>
+          <li><i class="fa-solid fa-check text-success me-2"></i> {% translate "Real-time transparent funding updates." %}</li>
+        </ul>
       </div>
     </div>
   </div>
@@ -400,8 +631,8 @@
     <div class="mt-5 pt-4 border-top">
       <div class="d-flex justify-content-between align-items-center mb-4">
         <div>
-          <span class="text-uppercase text-primary fw-bold small">Recommended for you</span>
-          <h3 class="fw-bold mb-0">Similar Projects</h3>
+          <span class="text-uppercase text-primary fw-bold small">{% translate "Recommended for you" %}</span>
+          <h3 class="fw-bold mb-0 brand-font">{% translate "Similar Projects" %}</h3>
         </div>
       </div>
 
@@ -414,6 +645,7 @@
       </div>
     </div>
   {% endif %}
+
 </div>
 
 <!-- Report Project Modal -->
@@ -424,20 +656,126 @@
         <form action="{% url 'projects:report_project' pk=project.pk %}" method="POST">
           {% csrf_token %}
           <div class="modal-header bg-danger text-white">
-            <h5 class="modal-title fw-bold" id="reportProjectModalLabel"><i class="fa-solid fa-flag me-2"></i> Report Project</h5>
+            <h5 class="modal-title fw-bold" id="reportProjectModalLabel"><i class="fa-solid fa-flag me-2"></i> {% translate "Report Project" %}</h5>
             <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal" aria-label="Close"></button>
           </div>
           <div class="modal-body p-4">
-            <p class="small text-muted mb-3">Please describe the inappropriate content or policy violation regarding this campaign:</p>
+            <p class="small text-muted mb-3">{% translate "Please describe the inappropriate content or policy violation regarding this campaign:" %}</p>
             {{ report_form.reason }}
           </div>
           <div class="modal-footer">
-            <button type="button" class="btn btn-light rounded-pill" data-bs-dismiss="modal">Cancel</button>
-            <button type="submit" class="btn btn-danger rounded-pill px-4">Submit Report</button>
+            <button type="button" class="btn btn-light rounded-pill" data-bs-dismiss="modal">{% translate "Cancel" %}</button>
+            <button type="submit" class="btn btn-danger rounded-pill px-4">{% translate "Submit Report" %}</button>
           </div>
         </form>
       </div>
     </div>
   </div>
 {% endif %}
+
+<!-- Remove Rating Confirmation Modal -->
+{% if user.is_authenticated and user_rating %}
+  <div class="modal fade" id="removeRatingModal" tabindex="-1" aria-labelledby="removeRatingModalLabel" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered" style="max-width: 420px;">
+      <div class="modal-content border-0 shadow-lg rounded-4 overflow-hidden">
+        <div class="modal-header bg-danger text-white py-3 px-4">
+          <h5 class="modal-title fw-bold fs-6 mb-0" id="removeRatingModalLabel">
+            <i class="fa-solid fa-star-half-stroke me-2"></i> {% translate "Remove Rating" %}
+          </h5>
+          <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal" aria-label="Close"></button>
+        </div>
+        <div class="modal-body p-4 text-center">
+          <div class="rounded-circle bg-danger bg-opacity-10 d-inline-flex align-items-center justify-content-center mb-3" style="width: 56px; height: 56px;">
+            <i class="fa-solid fa-trash-can fs-3 text-danger"></i>
+          </div>
+          <h5 class="fw-bold text-dark mb-2">{% translate "Remove your rating?" %}</h5>
+          <p class="text-secondary small mb-0">
+            {% translate "Your rating will be removed and the project's average rating will be recalculated." %}
+          </p>
+        </div>
+        <div class="modal-footer bg-light px-4 py-3 border-0 d-flex justify-content-end gap-2">
+          <button type="button" class="btn btn-light rounded-pill px-4" data-bs-dismiss="modal">{% translate "Cancel" %}</button>
+          <form method="POST" action="{% url 'projects:remove_rating' pk=project.pk %}">
+            {% csrf_token %}
+            <button type="submit" class="btn btn-danger rounded-pill px-4 fw-semibold shadow-sm">
+              <i class="fa-solid fa-trash-can me-1"></i> {% translate "Remove Rating" %}
+            </button>
+          </form>
+        </div>
+      </div>
+    </div>
+  </div>
+{% endif %}
+{% endblock %}
+
+{% block extra_js %}
+<script>
+document.addEventListener('DOMContentLoaded', function () {
+  const ratingWidget = document.getElementById('tamweelStarRating');
+  if (!ratingWidget) return;
+
+  const form = document.getElementById('tamweelRatingForm');
+  const scoreInput = document.getElementById('selected-rating-input');
+  const labelSpan = document.getElementById('ratingLabelSpan');
+  const buttons = Array.from(ratingWidget.querySelectorAll('.star-rating-btn'));
+
+  let selectedRating = parseInt(ratingWidget.getAttribute('data-initial-rating'), 10) || 0;
+
+  function renderRating(rating, isHover) {
+    buttons.forEach(function (btn, idx) {
+      const starVal = idx + 1;
+      if (isHover) {
+        if (starVal <= rating) {
+          btn.classList.add('is-hovered');
+        } else {
+          btn.classList.remove('is-hovered');
+        }
+      } else {
+        btn.classList.remove('is-hovered');
+        if (starVal <= rating) {
+          btn.classList.add('is-selected');
+        } else {
+          btn.classList.remove('is-selected');
+        }
+      }
+    });
+  }
+
+  // Set initial state
+  renderRating(selectedRating, false);
+
+  // Bind hover and click events
+  buttons.forEach(function (btn, idx) {
+    const starVal = idx + 1;
+
+    btn.addEventListener('mouseenter', function () {
+      renderRating(starVal, true);
+    });
+
+    btn.addEventListener('mouseleave', function () {
+      renderRating(selectedRating, false);
+    });
+
+    btn.addEventListener('click', function (e) {
+      e.preventDefault();
+      selectedRating = starVal;
+      ratingWidget.setAttribute('data-initial-rating', starVal);
+      if (scoreInput) {
+        scoreInput.value = starVal;
+      }
+      renderRating(selectedRating, false);
+      if (labelSpan) {
+        labelSpan.textContent = 'Your rating:';
+      }
+      if (form) {
+        form.submit();
+      }
+    });
+  });
+
+  ratingWidget.addEventListener('mouseleave', function () {
+    renderRating(selectedRating, false);
+  });
+});
+</script>
 {% endblock %}

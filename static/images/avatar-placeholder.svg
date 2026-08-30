@@ -1,0 +1,6 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="150" height="150" viewBox="0 0 150 150">
+  <circle cx="75" cy="75" r="75" fill="#0f9d8d"/>
+  <circle cx="75" cy="60" r="30" fill="white" opacity="0.9"/>
+  <path d="M30 130 A60 60 0 0 1 120 130" fill="white" opacity="0.9"/>
+  <text x="75" y="140" text-anchor="middle" font-family="Inter, sans-serif" font-size="10" fill="white" opacity="0.7">Tamweel</text>
+</svg>

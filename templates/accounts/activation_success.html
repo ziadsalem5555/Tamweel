@@ -1,6 +1,7 @@
 {% extends 'base.html' %}
+{% load i18n %}
 
-{% block title %}Account Activated | CrowdFund Egypt{% endblock %}
+{% block title %}{% translate "Account Activated | CrowdFund Egypt" %}{% endblock %}
 
 {% block content %}
 <div class="container py-5">
@@ -13,16 +14,17 @@
           </span>
         </div>
 
-        <h3 class="fw-bold mb-2">Account Activated Successfully!</h3>
+        <h3 class="fw-bold mb-2">{% translate "Account Activated Successfully!" %}</h3>
         <p class="text-muted mb-4">
-          Welcome aboard, <strong>{{ user.first_name }}</strong>! Your email has been verified and your account is active.
+          {% translate "Welcome aboard," %} <strong>{{ user.first_name }}</strong>! {% translate "Your email has been verified and your account is active." %}
         </p>
 
         <a href="{% url 'accounts:login' %}" class="btn btn-primary btn-lg rounded-pill px-5">
-          <i class="fa-solid fa-arrow-right-to-bracket me-2"></i> Log In Now
+          <i class="fa-solid fa-arrow-right-to-bracket me-2"></i> {% translate "Log In Now" %}
         </a>
       </div>
     </div>
   </div>
 </div>
 {% endblock %}
+

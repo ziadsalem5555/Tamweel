@@ -148,6 +148,25 @@ class ProjectImage(models.Model):
         return f"Image for {self.project.title} (#{self.pk})"
 
 
+from django.db.models.signals import post_delete
+from django.dispatch import receiver
+
+@receiver(post_delete, sender=ProjectImage)
+def auto_delete_project_image_file_on_delete(sender, instance, **kwargs):
+    """
+    Deletes physical file from filesystem/storage when corresponding ProjectImage object is deleted.
+    """
+    if instance.image:
+        try:
+            storage = instance.image.storage
+            name = instance.image.name
+            if storage and name and storage.exists(name):
+                storage.delete(name)
+        except Exception:
+            pass
+
+
+
 class Donation(models.Model):
     user = models.ForeignKey(settings.AUTH_USER_MODEL, on_delete=models.CASCADE, related_name='donations')
     project = models.ForeignKey(Project, on_delete=models.CASCADE, related_name='donations')

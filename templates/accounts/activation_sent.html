@@ -1,37 +1,64 @@
 {% extends 'base.html' %}
+{% load i18n %}
 
-{% block title %}Activation Link Sent | CrowdFund Egypt{% endblock %}
+{% block title %}{% if mail_error %}{% translate "Email Delivery Issue" %}{% else %}{% translate "Verification Code Sent" %}{% endif %} | Tamweel{% endblock %}
 
 {% block content %}
 <div class="container py-5">
   <div class="row justify-content-center">
     <div class="col-lg-6 col-md-8 text-center">
-      <div class="card border-0 shadow-lg rounded-4 p-4 p-md-5">
-        <div class="mb-4">
-          <span class="d-inline-flex align-items-center justify-content-center bg-primary bg-opacity-10 text-primary rounded-circle" style="width: 80px; height: 80px;">
-            <i class="fa-solid fa-envelope-circle-check display-5"></i>
-          </span>
-        </div>
+      <div class="card border-0 shadow-lg rounded-4 p-4 p-md-5" style="background: var(--bs-card-bg, #1e293b); color: var(--bs-body-color, #f8fafc);">
+        {% if mail_error %}
+          <div class="mb-4">
+            <span class="d-inline-flex align-items-center justify-content-center bg-danger bg-opacity-10 text-danger rounded-circle" style="width: 80px; height: 80px;">
+              <i class="fa-solid fa-triangle-exclamation display-5"></i>
+            </span>
+          </div>
 
-        <h3 class="fw-bold mb-2">Check Your Email</h3>
-        <p class="text-muted mb-4">
-          We sent a verification email to <strong class="text-dark">{{ email }}</strong>.
-        </p>
+          <h3 class="fw-bold mb-2">{% translate "Email Sending Issue" %}</h3>
+          <p class="text-muted mb-4">
+            {% translate "Your account was registered, but we encountered an issue sending the verification code to" %} <strong class="text-info">{{ email }}</strong>.
+          </p>
 
-        <div class="alert alert-warning border-0 small text-start mb-4">
-          <i class="fa-solid fa-clock me-1"></i> <strong>Important:</strong> Your activation link is valid for <strong>24 hours</strong>. You will not be able to log in until you activate your account.
-        </div>
+          <div class="alert alert-danger border-0 small text-start mb-4">
+            <i class="fa-solid fa-circle-exclamation me-1"></i> <strong>{% translate "Note:" %}</strong> {% translate "Please check your email address or check server configuration." %}
+          </div>
 
-        <div class="d-flex justify-content-center gap-2">
-          <a href="{% url 'accounts:login' %}" class="btn btn-outline-primary rounded-pill px-4">
-            Go to Login
-          </a>
-          <a href="{% url 'home' %}" class="btn btn-primary rounded-pill px-4">
-            Back to Home
-          </a>
-        </div>
+          <div class="d-flex justify-content-center gap-2">
+            <a href="{% url 'accounts:register' %}" class="btn btn-outline-primary rounded-pill px-4">
+              {% translate "Try Again" %}
+            </a>
+            <a href="{% url 'accounts:verify_otp' %}?email={{ email }}" class="btn btn-primary rounded-pill px-4">
+              {% translate "Go to OTP Verification" %}
+            </a>
+          </div>
+        {% else %}
+          <div class="mb-4">
+            <span class="d-inline-flex align-items-center justify-content-center bg-primary bg-opacity-10 text-primary rounded-circle" style="width: 80px; height: 80px;">
+              <i class="fa-solid fa-shield-halved display-5 text-info"></i>
+            </span>
+          </div>
+
+          <h3 class="fw-bold mb-2">{% translate "Verify Your Email" %}</h3>
+          <p class="text-muted mb-4">
+            {% translate "We sent a 6-digit verification code to" %} <strong class="text-info">{{ email }}</strong>.
+          </p>
+
+          <div class="alert alert-info border-0 small text-start mb-4">
+            <i class="fa-solid fa-clock me-1"></i> <strong>{% translate "Notice:" %}</strong> {% translate "Your verification code expires in 10 minutes." %}
+          </div>
+
+          <div class="d-flex justify-content-center gap-2">
+            <a href="{% url 'accounts:verify_otp' %}?email={{ email }}" class="btn btn-primary rounded-pill px-4">
+              <i class="fa-solid fa-key me-1"></i> {% translate "Enter Verification Code" %}
+            </a>
+          </div>
+        {% endif %}
       </div>
     </div>
   </div>
 </div>
 {% endblock %}
+
+
+

@@ -1,0 +1,247 @@
+{% extends 'base.html' %}
+{% load i18n static %}
+
+{% block title %}{% translate "Verify Your Email – Tamweel" %}{% endblock %}
+
+{% block content %}
+<div class="container py-5">
+  <div class="row justify-content-center">
+    <div class="col-md-7 col-lg-5">
+      
+      <div class="card shadow-lg border-0 rounded-4 overflow-hidden" style="background: var(--bs-card-bg, #1e293b); color: var(--bs-body-color, #f8fafc);">
+        <!-- Top Accent Bar -->
+        <div style="height: 6px; background: linear-gradient(90deg, #059669, #0284c7, #38bdf8);"></div>
+
+        <div class="card-body p-4 p-md-5 text-center">
+          
+          <!-- Icon Badge -->
+          <div class="d-inline-flex align-items-center justify-content-center p-3 rounded-circle mb-3 shadow" style="width: 76px; height: 76px; background: rgba(56, 189, 248, 0.15); color: #38bdf8; border: 1px solid rgba(56, 189, 248, 0.3);">
+            <i class="fa-solid fa-shield-halved fs-1"></i>
+          </div>
+
+          <h3 class="fw-bold mb-2">{% translate "Verify Your Email" %}</h3>
+          <p class="text-muted small mb-3">
+            {% translate "We sent a 6-digit verification code and an activation link to" %}<br>
+            <strong class="text-info fs-6" id="userEmailDisplay">{{ email }}</strong>
+          </p>
+          <div class="p-2 mb-4 rounded-3 bg-light bg-opacity-10 border border-secondary border-opacity-25 small text-secondary">
+            <i class="fa-solid fa-envelope-circle-check text-primary me-1"></i> {% translate "You can enter your 6-digit code below or click the activation link in your email to verify directly." %}
+          </div>
+
+          <!-- Flash Messages -->
+          {% if messages %}
+            {% for message in messages %}
+              <div class="alert alert-{{ message.tags }} alert-dismissible fade show text-start py-2 px-3 small rounded-3 mb-4" role="alert">
+                <i class="fa-solid fa-circle-info me-1"></i> {{ message }}
+                <button type="button" class="btn-close btn-close-sm" data-bs-dismiss="alert" aria-label="Close"></button>
+              </div>
+            {% endfor %}
+          {% endif %}
+
+          {% if error_message %}
+            <div class="alert alert-danger text-start py-2 px-3 small rounded-3 mb-4" id="errorMessageAlert">
+              <i class="fa-solid fa-triangle-exclamation me-1"></i> {{ error_message }}
+            </div>
+          {% endif %}
+
+          <!-- OTP Form -->
+          <form method="POST" action="{% url 'accounts:verify_otp' %}" id="otpForm" novalidate>
+            {% csrf_token %}
+            <input type="hidden" name="email" value="{{ email }}">
+            <input type="hidden" name="otp_code" id="hiddenOtpInput">
+
+            <!-- 6 Digit Input Boxes -->
+            <div class="d-flex justify-content-center align-items-center gap-2 mb-4" id="otpInputsContainer">
+              <input type="text" name="d1" id="otp1" class="form-control text-center otp-box fw-bold fs-3 rounded-3" maxlength="1" pattern="[0-9]*" inputmode="numeric" autocomplete="one-time-code" autofocus required>
+              <input type="text" name="d2" id="otp2" class="form-control text-center otp-box fw-bold fs-3 rounded-3" maxlength="1" pattern="[0-9]*" inputmode="numeric" required>
+              <input type="text" name="d3" id="otp3" class="form-control text-center otp-box fw-bold fs-3 rounded-3" maxlength="1" pattern="[0-9]*" inputmode="numeric" required>
+              <input type="text" name="d4" id="otp4" class="form-control text-center otp-box fw-bold fs-3 rounded-3" maxlength="1" pattern="[0-9]*" inputmode="numeric" required>
+              <input type="text" name="d5" id="otp5" class="form-control text-center otp-box fw-bold fs-3 rounded-3" maxlength="1" pattern="[0-9]*" inputmode="numeric" required>
+              <input type="text" name="d6" id="otp6" class="form-control text-center otp-box fw-bold fs-3 rounded-3" maxlength="1" pattern="[0-9]*" inputmode="numeric" required>
+            </div>
+
+            <!-- Verify Code Button -->
+            <button type="submit" class="btn btn-primary w-100 py-3 rounded-pill fw-bold shadow-sm mb-3" id="verifyBtn">
+              <i class="fa-solid fa-check-circle me-1"></i> {% translate "Verify Code" %}
+            </button>
+          </form>
+
+          <!-- Resend Section with Countdown / Cooldown -->
+          <div class="pt-3 border-top border-secondary border-opacity-25 mt-3">
+            <p class="small text-muted mb-2">{% translate "Didn't receive the verification code?" %}</p>
+            <form method="POST" action="{% url 'accounts:resend_otp' %}" id="resendForm" class="d-inline">
+              {% csrf_token %}
+              <input type="hidden" name="email" value="{{ email }}">
+              <button type="submit" class="btn btn-link text-decoration-none p-0 fw-semibold text-primary small" id="resendBtn" {% if remaining_seconds > 0 %}disabled{% endif %}>
+                <i class="fa-solid fa-rotate-right me-1"></i> {% translate "Resend Code" %} <span id="timerText">{% if remaining_seconds > 0 %}(in {{ remaining_seconds }}s){% endif %}</span>
+              </button>
+            </form>
+          </div>
+
+          <div class="mt-3">
+            <a href="{% url 'accounts:register' %}" class="small text-muted text-decoration-none">
+              <i class="fa-solid fa-arrow-left me-1"></i> {% translate "Register with a different email" %}
+            </a>
+          </div>
+
+        </div>
+      </div>
+
+    </div>
+  </div>
+</div>
+
+<style>
+#otpInputsContainer {
+  display: flex !important;
+  flex-direction: row !important;
+  justify-content: center !important;
+  gap: 8px !important;
+}
+.otp-box {
+  width: 50px !important;
+  min-width: 40px !important;
+  height: 60px !important;
+  font-size: 24px !important;
+  font-weight: 700 !important;
+  text-align: center !important;
+  background: rgba(255, 255, 255, 0.06) !important;
+  border: 2px solid rgba(255, 255, 255, 0.18) !important;
+  color: #38bdf8 !important;
+  border-radius: 10px !important;
+  padding: 0 !important;
+  transition: all 0.2s ease-in-out;
+}
+.otp-box:focus {
+  background: rgba(56, 189, 248, 0.12) !important;
+  border-color: #38bdf8 !important;
+  box-shadow: 0 0 14px rgba(56, 189, 248, 0.45) !important;
+  color: #ffffff !important;
+  outline: none !important;
+}
+#resendBtn:disabled {
+  color: #64748b !important;
+  cursor: not-allowed;
+  text-decoration: none;
+}
+</style>
+
+<script>
+document.addEventListener('DOMContentLoaded', function () {
+  const boxes = Array.from(document.querySelectorAll('.otp-box'));
+  const hiddenInput = document.getElementById('hiddenOtpInput');
+  const otpForm = document.getElementById('otpForm');
+  const resendBtn = document.getElementById('resendBtn');
+  const timerText = document.getElementById('timerText');
+
+  // Autofocus first box
+  if (boxes.length > 0) {
+    boxes[0].focus();
+  }
+
+  // Handle Box Inputs & Keystrokes
+  boxes.forEach((box, index) => {
+    box.addEventListener('input', (e) => {
+      const val = e.target.value;
+
+      // Allow only single numeric digit
+      if (!/^\d*$/.test(val)) {
+        e.target.value = '';
+        return;
+      }
+
+      if (val.length >= 1) {
+        e.target.value = val.slice(-1); // Keep last entered character
+        if (index < boxes.length - 1) {
+          boxes[index + 1].focus();
+        }
+      }
+      updateHiddenOtp();
+    });
+
+    box.addEventListener('keydown', (e) => {
+      if (e.key === 'Backspace') {
+        if (!e.target.value && index > 0) {
+          boxes[index - 1].focus();
+          boxes[index - 1].value = '';
+          updateHiddenOtp();
+        }
+      } else if (e.key === 'ArrowLeft' && index > 0) {
+        boxes[index - 1].focus();
+      } else if (e.key === 'ArrowRight' && index < boxes.length - 1) {
+        boxes[index + 1].focus();
+      }
+    });
+
+    // Handle Paste Event
+    box.addEventListener('paste', (e) => {
+      e.preventDefault();
+      const pasteData = (e.clipboardData || window.clipboardData).getData('text').trim();
+      const digitsOnly = pasteData.replace(/\D/g, '');
+      if (digitsOnly.length === 6) {
+        digitsOnly.split('').forEach((char, i) => {
+          if (boxes[i]) boxes[i].value = char;
+        });
+        updateHiddenOtp();
+        otpForm.submit();
+      } else if (digitsOnly.length > 0) {
+        digitsOnly.slice(0, 6).split('').forEach((char, i) => {
+          if (boxes[i]) boxes[i].value = char;
+        });
+        updateHiddenOtp();
+        const nextIndex = Math.min(digitsOnly.length, 5);
+        if (boxes[nextIndex]) boxes[nextIndex].focus();
+      }
+    });
+  });
+
+  function updateHiddenOtp() {
+    let code = '';
+    boxes.forEach(b => code += b.value);
+    hiddenInput.value = code;
+
+    // Auto submit if all 6 digits are typed
+    if (code.length === 6) {
+      otpForm.submit();
+    }
+  }
+
+  otpForm.addEventListener('submit', function(e) {
+    let code = '';
+    boxes.forEach(b => code += b.value);
+    hiddenInput.value = code;
+
+    if (code.length !== 6) {
+      e.preventDefault();
+      alert('Please enter the complete 6-digit verification code.');
+      const firstEmpty = boxes.find(b => !b.value) || boxes[0];
+      if (firstEmpty) firstEmpty.focus();
+    }
+  });
+
+  // Live Countdown Timer for Resend
+  let timeLeft = parseInt("{{ remaining_seconds|default:'0' }}", 10);
+  if (isNaN(timeLeft)) timeLeft = 0;
+
+  function updateTimer() {
+    if (timeLeft > 0) {
+      resendBtn.disabled = true;
+      timerText.textContent = `(in ${timeLeft}s)`;
+      timeLeft--;
+      setTimeout(updateTimer, 1000);
+    } else {
+      resendBtn.disabled = false;
+      timerText.textContent = '';
+    }
+  }
+
+  if (timeLeft > 0) {
+    updateTimer();
+  } else {
+    resendBtn.disabled = false;
+    timerText.textContent = '';
+  }
+});
+</script>
+{% endblock %}
+

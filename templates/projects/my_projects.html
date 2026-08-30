@@ -1,16 +1,17 @@
 {% extends 'base.html' %}
+{% load i18n %}
 
-{% block title %}My Projects | CrowdFund Egypt{% endblock %}
+{% block title %}{% translate "My Projects" %} | CrowdFund Egypt{% endblock %}
 
 {% block content %}
 <div class="container py-5">
   <div class="d-flex justify-content-between align-items-center mb-4">
     <div>
-      <h2 class="fw-bold mb-1">My Campaigns</h2>
-      <p class="text-muted small mb-0">Manage and track your created fundraising projects</p>
+      <h2 class="fw-bold mb-1">{% translate "My Projects" %}</h2>
+      <p class="text-muted small mb-0">{% translate "Manage and track your created fundraising projects" %}</p>
     </div>
     <a href="{% url 'projects:project_create' %}" class="btn btn-primary rounded-pill">
-      <i class="fa-solid fa-plus me-1"></i> Start New Campaign
+      <i class="fa-solid fa-plus me-1"></i> {% translate "Create Project" %}
     </a>
   </div>
 
@@ -23,10 +24,10 @@
     <div class="col-12 text-center py-5">
       <div class="p-5 bg-white rounded-4 border">
         <i class="fa-solid fa-folder-open fs-1 text-muted mb-3 opacity-50"></i>
-        <h4 class="fw-bold">No campaigns yet</h4>
-        <p class="text-muted">You haven't launched any campaigns yet. Start one today!</p>
+        <h4 class="fw-bold">{% translate "No campaigns yet" %}</h4>
+        <p class="text-muted">{% translate "You haven't launched any campaigns yet. Start one today!" %}</p>
         <a href="{% url 'projects:project_create' %}" class="btn btn-primary rounded-pill px-4">
-          Create Campaign
+          {% translate "Create Campaign" %}
         </a>
       </div>
     </div>

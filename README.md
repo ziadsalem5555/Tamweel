@@ -130,6 +130,37 @@ DEFAULT_FROM_EMAIL=CrowdFund Egypt <noreply@crowdfundegypt.com>
 
 ---
 
+## 🌐 Meta / Facebook OAuth Login (Bonus Feature)
+
+Tamweel supports single sign-on via Meta / Facebook OAuth 2.0.
+
+### 1. Facebook App Setup:
+1. Go to the [Meta for Developers Portal](https://developers.facebook.com/) and log in.
+2. Click **Create App** and select **Authenticate and request data from users with Facebook Login** (or "Consumer" / "Business").
+3. Add the **Facebook Login** product to your App.
+4. Under **Facebook Login > Settings > Client OAuth Settings**, add the exact OAuth Redirect URI:
+   ```text
+   http://127.0.0.1:8000/accounts/facebook/callback/
+   ```
+   *(For production, add `https://yourdomain.com/accounts/facebook/callback/`)*
+5. Under **App Settings > Basic**, copy your **App ID** and **App Secret**.
+
+### 2. Configure Environment Variables (`.env`):
+```env
+FACEBOOK_APP_ID=your_actual_facebook_app_id
+FACEBOOK_APP_SECRET=your_actual_facebook_app_secret
+FACEBOOK_REDIRECT_URI=http://127.0.0.1:8000/accounts/facebook/callback/
+```
+
+### 3. Local Testing Flow:
+1. Open `http://127.0.0.1:8000/accounts/login/` in your browser.
+2. Click **Continue with Facebook**.
+3. Authenticate and authorize permissions on Facebook dialog.
+4. Facebook redirects back to Django, automatically linking to your existing account or creating a verified Tamweel profile without passwords.
+
+---
+
+
 ## 📁 Project Architecture
 
 ```

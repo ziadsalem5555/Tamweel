@@ -6,12 +6,16 @@ from django.urls import path, include
 from django.conf import settings
 from django.conf.urls.static import static
 from projects.views import home_view
+from accounts.views import dashboard_view
 
 urlpatterns = [
     path('admin/', admin.site.urls),
+    path('i18n/', include('django.conf.urls.i18n')),
     path('', home_view, name='home'),
+    path('dashboard/', dashboard_view, name='dashboard'),
     path('accounts/', include('accounts.urls')),
     path('projects/', include('projects.urls')),
+    path('chatbot/', include('chatbot.urls')),
 ]
 
 # Serve media files in development

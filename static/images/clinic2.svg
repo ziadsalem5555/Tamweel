@@ -1,0 +1,61 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="800" height="600" viewBox="0 0 800 600">
+  <defs>
+    <linearGradient id="bg2" x1="0" y1="0" x2="0" y2="1"><stop offset="0%" stop-color="#f8fafc"/><stop offset="100%" stop-color="#eff6ff"/></linearGradient>
+  </defs>
+  <rect width="800" height="600" fill="url(#bg2)"/>
+  <!-- header -->
+  <rect width="800" height="56" fill="white" stroke="#e2e8f0" stroke-width="1"/>
+  <text x="30" y="24" font-family="Inter, sans-serif" font-size="11" font-weight="700" fill="#0f766e" letter-spacing="2">MEDICAL INVENTORY</text>
+  <text x="30" y="40" font-family="Inter, sans-serif" font-size="10" fill="#64748b">Equipment only • No people shown</text>
+  <rect x="620" y="16" width="150" height="24" rx="12" fill="#dbeafe"/><text x="695" y="32" text-anchor="middle" font-family="Inter, sans-serif" font-size="10" font-weight="700" fill="#1d4ed8">10,000 doses</text>
+  <!-- main card -->
+  <rect x="60" y="80" width="680" height="420" rx="20" fill="white" stroke="#e2e8f0" stroke-width="2"/>
+  <rect x="60" y="80" width="680" height="48" rx="20" fill="#0f766e"/>
+  <rect x="60" y="108" width="680" height="20" fill="#0f766e"/>
+  <circle cx="90" cy="104" r="7" fill="#34d399"/><circle cx="110" cy="104" r="7" fill="#fde68a"/><circle cx="130" cy="104" r="7" fill="#7dd3fc"/>
+  <text x="400" y="108" text-anchor="middle" font-family="Inter, sans-serif" font-size="12" font-weight="800" fill="white" letter-spacing="1">CLINIC STOCK • UPPER EGYPT</text>
+  <!-- items grid -->
+  <!-- stethoscope -->
+  <rect x="90" y="150" width="190" height="110" rx="14" fill="#f8fafc" stroke="#e2e8f0" stroke-width="1.5"/>
+  <circle cx="165" cy="185" r="28" fill="none" stroke="#0f172a" stroke-width="3.5"/><circle cx="165" cy="185" r="11" fill="#0f172a"/>
+  <path d="M185 198 Q205 215 225 195" stroke="#0f172a" stroke-width="3.5" fill="none" stroke-linecap="round"/>
+  <circle cx="225" cy="195" r="6" fill="#0f172a"/><circle cx="225" cy="195" r="2" fill="white"/>
+  <text x="185" y="230" text-anchor="middle" font-family="Inter, sans-serif" font-size="11" font-weight="800" fill="#0f172a">Stethoscope</text>
+  <text x="185" y="244" text-anchor="middle" font-family="Inter, sans-serif" font-size="9" fill="#64748b">× 12 units</text>
+  <!-- medicine box -->
+  <rect x="305" y="150" width="190" height="110" rx="14" fill="#fffbeb" stroke="#fde68a" stroke-width="1.5"/>
+  <rect x="335" y="165" width="130" height="50" rx="8" fill="white" stroke="#f59e0b" stroke-width="1.5"/>
+  <rect x="345" y="175" width="110" height="8" rx="4" fill="#f59e0b"/><rect x="345" y="188" width="110" height="6" rx="3" fill="#fde68a"/><rect x="345" y="200" width="70" height="6" rx="3" fill="#fde68a"/>
+  <text x="400" y="160" text-anchor="middle" font-family="Inter, sans-serif" font-size="8" font-weight="800" fill="#92400e" letter-spacing="1">MED BOX</text>
+  <text x="400" y="230" text-anchor="middle" font-family="Inter, sans-serif" font-size="11" font-weight="800" fill="#78350f">Antibiotics</text>
+  <text x="400" y="244" text-anchor="middle" font-family="Inter, sans-serif" font-size="9" fill="#92400e">500 packs</text>
+  <!-- pills -->
+  <rect x="520" y="150" width="190" height="110" rx="14" fill="#f0fdfa" stroke="#a7f3d0" stroke-width="1.5"/>
+  <rect x="540" y="170" width="150" height="52" rx="10" fill="white" stroke="#6ee7b7" stroke-width="1.5"/>
+  <circle cx="555" cy="185" r="9" fill="#ef4444"/><circle cx="575" cy="185" r="9" fill="#f59e0b"/><circle cx="595" cy="185" r="9" fill="#0ea5e9"/><circle cx="615" cy="185" r="9" fill="#10b981"/><circle cx="635" cy="185" r="9" fill="#8b5cf6"/><circle cx="565" cy="205" r="9" fill="#ec4899"/><circle cx="585" cy="205" r="9" fill="#06b6d4"/><circle cx="605" cy="205" r="9" fill="#f97316"/>
+  <text x="615" y="230" text-anchor="middle" font-family="Inter, sans-serif" font-size="11" font-weight="800" fill="#065f46">Pills</text>
+  <text x="615" y="244" text-anchor="middle" font-family="Inter, sans-serif" font-size="9" fill="#047857">8 types • 10k doses</text>
+  <!-- second row -->
+  <rect x="90" y="280" width="190" height="110" rx="14" fill="#eff6ff" stroke="#dbeafe" stroke-width="1.5"/>
+  <rect x="115" y="300" width="140" height="50" rx="8" fill="white" stroke="#3b82f6" stroke-width="1.5"/>
+  <text x="185" y="320" text-anchor="middle" font-family="Inter, sans-serif" font-size="9" font-weight="800" fill="#1d4ed8">BLOOD PRESSURE</text>
+  <rect x="135" y="335" width="90" height="14" rx="7" fill="#dbeafe"/><circle cx="215" cy="342" r="6" fill="#3b82f6"/>
+  <text x="185" y="370" text-anchor="middle" font-family="Inter, sans-serif" font-size="11" font-weight="800" fill="#1e3a8a">Monitor</text>
+  <text x="185" y="384" text-anchor="middle" font-family="Inter, sans-serif" font-size="9" fill="#3b82f6">× 8</text>
+  <rect x="305" y="280" width="190" height="110" rx="14" fill="#fef2f2" stroke="#fecaca" stroke-width="1.5"/>
+  <circle cx="400" cy="320" r="28" fill="#fecaca" stroke="#ef4444" stroke-width="2"/>
+  <path d="M385 320 L395 332 L415 312" stroke="#dc2626" stroke-width="3" fill="none" stroke-linecap="round" stroke-linejoin="round"/>
+  <text x="400" y="370" text-anchor="middle" font-family="Inter, sans-serif" font-size="11" font-weight="800" fill="#991b1b">First Aid</text>
+  <text x="400" y="384" text-anchor="middle" font-family="Inter, sans-serif" font-size="9" fill="#dc2626">Kits • 40</text>
+  <rect x="520" y="280" width="190" height="110" rx="14" fill="#f5f3ff" stroke="#ddd6fe" stroke-width="1.5"/>
+  <rect x="545" y="300" width="140" height="40" rx="6" fill="white" stroke="#8b5cf6" stroke-width="1.5"/>
+  <line x1="555" y1="315" x2="675" y2="315" stroke="#ddd6fe" stroke-width="2"/><line x1="555" y1="325" x2="660" y2="325" stroke="#ddd6fe" stroke-width="2"/><line x1="555" y1="335" x2="670" y2="335" stroke="#ddd6fe" stroke-width="2"/>
+  <circle cx="560" cy="310" r="4" fill="#8b5cf6"/><circle cx="575" cy="310" r="4" fill="#8b5cf6"/>
+  <text x="615" y="370" text-anchor="middle" font-family="Inter, sans-serif" font-size="11" font-weight="800" fill="#5b21b6">Records</text>
+  <text x="615" y="384" text-anchor="middle" font-family="Inter, sans-serif" font-size="9" fill="#7c3aed">Digital • Secure</text>
+  <!-- footer -->
+  <rect x="90" y="410" width="620" height="48" rx="10" fill="#f8fafc" stroke="#e2e8f0" stroke-width="1"/>
+  <circle cx="120" cy="434" r="8" fill="#10b981"/><text x="135" y="438" font-family="Inter, sans-serif" font-size="10" font-weight="700" fill="#065f46">Stock verified</text>
+  <circle cx="250" cy="434" r="8" fill="#0ea5e9"/><text x="265" y="438" font-family="Inter, sans-serif" font-size="10" font-weight="700" fill="#0c4a6e">No humans shown</text>
+  <text x="620" y="438" font-family="Inter, sans-serif" font-size="10" font-weight="800" fill="#0f766e">10,000 patients →</text>
+</svg>

@@ -1,18 +1,19 @@
 {% extends 'base.html' %}
+{% load i18n %}
 
-{% block title %}Register | CrowdFund Egypt{% endblock %}
+{% block title %}{% translate "Register – Tamweel Crowd-Funding" %}{% endblock %}
 
 {% block content %}
 <div class="container py-5">
   <div class="row justify-content-center">
     <div class="col-lg-6 col-md-8">
       <div class="card border-0 shadow-lg rounded-4 overflow-hidden">
-        <div class="card-header bg-primary text-white text-center py-4">
+        <div class="card-header bg-primary text-white text-center py-4" style="background: linear-gradient(135deg, var(--primary, #0f9d8d) 0%, #0284c7 100%) !important;">
           <div class="d-inline-flex align-items-center justify-content-center bg-white text-primary rounded-circle mb-2" style="width: 50px; height: 50px;">
-            <i class="fa-solid fa-user-plus fs-4"></i>
+            <i class="fa-solid fa-user-plus fs-4" style="color: var(--primary, #0f9d8d);"></i>
           </div>
-          <h3 class="fw-bold mb-0">Create an Account</h3>
-          <p class="small text-white-50 mb-0">Join the Egyptian Crowdfunding Community</p>
+          <h3 class="fw-bold mb-0 brand-font">{% translate "Create an Account" %}</h3>
+          <p class="small text-white-50 mb-0">{% translate "Join the Tamweel Crowdfunding Community" %}</p>
         </div>
 
         <div class="card-body p-4 p-md-5">
@@ -29,14 +30,14 @@
 
             <div class="row g-3 mb-3">
               <div class="col-md-6">
-                <label class="form-label fw-semibold small">First Name <span class="text-danger">*</span></label>
+                <label class="form-label fw-semibold small">{% translate "First Name" %} <span class="text-danger">*</span></label>
                 {{ form.first_name }}
                 {% if form.first_name.errors %}
                   <div class="text-danger small mt-1">{{ form.first_name.errors.0 }}</div>
                 {% endif %}
               </div>
               <div class="col-md-6">
-                <label class="form-label fw-semibold small">Last Name <span class="text-danger">*</span></label>
+                <label class="form-label fw-semibold small">{% translate "Last Name" %} <span class="text-danger">*</span></label>
                 {{ form.last_name }}
                 {% if form.last_name.errors %}
                   <div class="text-danger small mt-1">{{ form.last_name.errors.0 }}</div>
@@ -45,25 +46,25 @@
             </div>
 
             <div class="mb-3">
-              <label class="form-label fw-semibold small">Email Address <span class="text-danger">*</span></label>
+              <label class="form-label fw-semibold small">{% translate "Email Address" %} <span class="text-danger">*</span></label>
               {{ form.email }}
               {% if form.email.errors %}
                 <div class="text-danger small mt-1">{{ form.email.errors.0 }}</div>
               {% endif %}
-              <div class="form-text">We will send a 24-hour activation link to this email.</div>
+              <div class="form-text">{% translate "We will send a 6-digit OTP verification code to this email." %}</div>
             </div>
 
             <div class="mb-3">
-              <label class="form-label fw-semibold small">Mobile Phone (Egyptian) <span class="text-danger">*</span></label>
+              <label class="form-label fw-semibold small">{% translate "Mobile Phone (Egyptian)" %} <span class="text-danger">*</span></label>
               {{ form.mobile_phone }}
               {% if form.mobile_phone.errors %}
                 <div class="text-danger small mt-1">{{ form.mobile_phone.errors.0 }}</div>
               {% endif %}
-              <div class="form-text">Must be a valid Egyptian mobile number (e.g. 01012345678, 011..., 012..., 015...).</div>
+              <div class="form-text">{% translate "Must be a valid Egyptian mobile number (e.g. 01012345678, 011..., 012..., 015...)." %}</div>
             </div>
 
             <div class="mb-3">
-              <label class="form-label fw-semibold small">Profile Picture (Optional)</label>
+              <label class="form-label fw-semibold small">{% translate "Profile Picture (Optional)" %}</label>
               {{ form.profile_picture }}
               {% if form.profile_picture.errors %}
                 <div class="text-danger small mt-1">{{ form.profile_picture.errors.0 }}</div>
@@ -72,14 +73,14 @@
 
             <div class="row g-3 mb-4">
               <div class="col-md-6">
-                <label class="form-label fw-semibold small">Password <span class="text-danger">*</span></label>
+                <label class="form-label fw-semibold small">{% translate "Password" %} <span class="text-danger">*</span></label>
                 {{ form.password }}
                 {% if form.password.errors %}
                   <div class="text-danger small mt-1">{{ form.password.errors.0 }}</div>
                 {% endif %}
               </div>
               <div class="col-md-6">
-                <label class="form-label fw-semibold small">Confirm Password <span class="text-danger">*</span></label>
+                <label class="form-label fw-semibold small">{% translate "Confirm Password" %} <span class="text-danger">*</span></label>
                 {{ form.confirm_password }}
                 {% if form.confirm_password.errors %}
                   <div class="text-danger small mt-1">{{ form.confirm_password.errors.0 }}</div>
@@ -89,12 +90,12 @@
 
             <div class="d-grid mb-3">
               <button type="submit" class="btn btn-primary btn-lg rounded-pill fw-semibold shadow-sm">
-                <i class="fa-solid fa-paper-plane me-1"></i> Register & Send Activation
+                <i class="fa-solid fa-paper-plane me-1"></i> {% translate "Register & Send Verification Code" %}
               </button>
             </div>
 
             <div class="text-center small text-muted">
-              Already have an account? <a href="{% url 'accounts:login' %}" class="fw-bold text-primary">Log in here</a>
+              {% translate "Already have an account?" %} <a href="{% url 'accounts:login' %}" class="fw-bold text-primary">{% translate "Log in here" %}</a>
             </div>
           </form>
         </div>
@@ -103,3 +104,5 @@
   </div>
 </div>
 {% endblock %}
+
+

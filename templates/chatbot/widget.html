@@ -1,0 +1,99 @@
+{% load static i18n %}
+<!-- Tamweel AI Chatbot Isolated Widget -->
+<link rel="stylesheet" href="{% static 'chatbot/chatbot.css' %}">
+
+<div id="tamweel-chat-widget" data-api-url="{% url 'chatbot:message_api' %}">
+  <!-- Floating Launch Button -->
+  <button id="tw-chat-launcher" class="tw-chat-launcher-btn" type="button" aria-label="{% translate 'Open Tamweel Assistant' %}" aria-expanded="false">
+    <i class="fa-solid fa-comment-dots tw-chat-icon-open"></i>
+    <i class="fa-solid fa-xmark tw-chat-icon-close tw-d-none"></i>
+    <span class="tw-chat-pulse"></span>
+  </button>
+
+  <!-- Chat Window Drawer -->
+  <div id="tw-chat-drawer" class="tw-chat-drawer tw-d-none" role="dialog" aria-label="{% translate 'Tamweel AI Assistant' %}" aria-modal="true">
+    <!-- Header -->
+    <div class="tw-chat-header">
+      <div class="tw-chat-header-info">
+        <div class="tw-chat-avatar">
+          <i class="fa-solid fa-robot"></i>
+        </div>
+        <div class="tw-chat-header-text">
+          <div class="tw-chat-title">{% translate "Tamweel Assistant" %}</div>
+          <div class="tw-chat-subtitle">
+            <span class="tw-chat-status-dot"></span> {% translate "Online • AI Support" %}
+          </div>
+        </div>
+      </div>
+      <button id="tw-chat-close-btn" class="tw-chat-close-btn" type="button" aria-label="{% translate 'Close Tamweel Assistant' %}">
+        <i class="fa-solid fa-xmark"></i>
+      </button>
+    </div>
+
+    <!-- Message Body -->
+    <div id="tw-chat-messages" class="tw-chat-messages" role="log" aria-live="polite">
+      <!-- Welcome Message from Assistant -->
+      <div class="tw-chat-msg tw-chat-msg-assistant">
+        <div class="tw-chat-msg-avatar">
+          <i class="fa-solid fa-robot"></i>
+        </div>
+        <div class="tw-chat-msg-body">
+          <div class="tw-chat-bubble">
+            <p class="tw-chat-msg-text">
+              {% blocktranslate %}Hi! I'm the <strong>Tamweel Assistant</strong>. How can I help you today?{% endblocktranslate %}
+            </p>
+          </div>
+          <div class="tw-chat-suggestions">
+            <span class="tw-chat-suggestions-title">{% translate "Quick questions:" %}</span>
+            <div class="tw-chat-suggestion-chips">
+              <button type="button" class="tw-chat-chip" data-question="{% translate 'How do I create a campaign?' %}">{% translate "How do I create a campaign?" %}</button>
+              <button type="button" class="tw-chat-chip" data-question="{% translate 'How do I donate?' %}">{% translate "How do I donate?" %}</button>
+              <button type="button" class="tw-chat-chip" data-question="{% translate 'How do I reset my password?' %}">{% translate "How do I reset my password?" %}</button>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Typing Indicator -->
+    <div id="tw-chat-typing" class="tw-chat-typing tw-d-none" aria-hidden="true">
+      <div class="tw-chat-msg-avatar">
+        <i class="fa-solid fa-robot"></i>
+      </div>
+      <div class="tw-chat-typing-bubble">
+        <span class="tw-chat-dot"></span>
+        <span class="tw-chat-dot"></span>
+        <span class="tw-chat-dot"></span>
+      </div>
+    </div>
+
+    <!-- Input Footer -->
+    <form id="tw-chat-form" class="tw-chat-footer" autocomplete="off">
+      <div class="tw-chat-input-wrapper">
+        <textarea
+          id="tw-chat-input"
+          class="tw-chat-textarea"
+          placeholder="{% translate 'Ask Tamweel anything...' %}"
+          rows="1"
+          maxlength="500"
+          aria-label="{% translate 'Your message to Tamweel Assistant' %}"
+        ></textarea>
+        <button
+          id="tw-chat-send-btn"
+          class="tw-chat-send-btn"
+          type="submit"
+          disabled
+          aria-label="{% translate 'Send message' %}"
+        >
+          <i class="fa-solid fa-paper-plane"></i>
+        </button>
+      </div>
+      <div class="tw-chat-char-counter">
+        <span id="tw-chat-char-count">0</span>/500
+      </div>
+    </form>
+  </div>
+</div>
+
+<script src="{% static 'chatbot/chatbot.js' %}"></script>
+

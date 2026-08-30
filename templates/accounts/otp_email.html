@@ -1,0 +1,221 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Verify your Tamweel account</title>
+  <style>
+    body {
+      margin: 0;
+      padding: 0;
+      background-color: #0b1120;
+      font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;
+      color: #e2e8f0;
+    }
+    .wrapper {
+      width: 100%;
+      table-layout: fixed;
+      background-color: #0b1120;
+      padding: 40px 10px;
+    }
+    .main-card {
+      max-width: 540px;
+      margin: 0 auto;
+      background: linear-gradient(145deg, #1e293b 0%, #0f172a 100%);
+      border: 1px solid rgba(255, 255, 255, 0.1);
+      border-radius: 16px;
+      overflow: hidden;
+      box-shadow: 0 20px 40px rgba(0, 0, 0, 0.5);
+    }
+    .header {
+      background: linear-gradient(135deg, #059669 0%, #0284c7 100%);
+      padding: 30px 20px;
+      text-align: center;
+    }
+    .header h1 {
+      margin: 0;
+      font-size: 26px;
+      font-weight: 800;
+      letter-spacing: 1px;
+      color: #ffffff;
+      text-transform: uppercase;
+    }
+    .header p {
+      margin: 6px 0 0;
+      font-size: 13px;
+      color: rgba(255, 255, 255, 0.9);
+      letter-spacing: 0.5px;
+    }
+    .body-content {
+      padding: 35px 30px;
+      text-align: center;
+    }
+    .greeting {
+      font-size: 20px;
+      font-weight: 700;
+      color: #f8fafc;
+      margin-bottom: 12px;
+    }
+    .instruction {
+      font-size: 14px;
+      color: #94a3b8;
+      line-height: 1.5;
+      margin-bottom: 15px;
+    }
+    .otp-container {
+      background: rgba(15, 23, 42, 0.8);
+      border: 2px dashed #0284c7;
+      border-radius: 12px;
+      padding: 16px;
+      margin: 15px 0 10px;
+    }
+    .otp-code {
+      font-size: 38px;
+      font-weight: 900;
+      letter-spacing: 8px;
+      color: #38bdf8;
+      margin: 0;
+      font-family: 'Courier New', Courier, monospace;
+    }
+    .expiry-badge {
+      display: inline-block;
+      background: rgba(234, 179, 8, 0.15);
+      border: 1px solid rgba(234, 179, 8, 0.3);
+      color: #facc15;
+      font-size: 12px;
+      font-weight: 600;
+      padding: 4px 12px;
+      border-radius: 20px;
+      margin-bottom: 15px;
+    }
+    .or-divider {
+      position: relative;
+      margin: 25px 0;
+      text-align: center;
+    }
+    .or-divider::before {
+      content: "";
+      position: absolute;
+      top: 50%;
+      left: 0;
+      right: 0;
+      height: 1px;
+      background: rgba(255, 255, 255, 0.15);
+    }
+    .or-divider span {
+      position: relative;
+      background: #1e293b;
+      padding: 4px 16px;
+      font-size: 12px;
+      font-weight: bold;
+      color: #94a3b8;
+      text-transform: uppercase;
+      letter-spacing: 1px;
+      border-radius: 10px;
+    }
+    .btn-activate {
+      display: inline-block;
+      background: linear-gradient(135deg, #0f9d8d 0%, #0284c7 100%);
+      color: #ffffff !important;
+      text-decoration: none;
+      font-weight: 700;
+      font-size: 15px;
+      padding: 14px 32px;
+      border-radius: 30px;
+      box-shadow: 0 4px 12px rgba(2, 132, 199, 0.4);
+      margin: 10px 0 15px;
+    }
+    .link-fallback {
+      font-size: 12px;
+      color: #64748b;
+      word-break: break-all;
+      margin-top: 10px;
+    }
+    .link-fallback a {
+      color: #38bdf8;
+      text-decoration: underline;
+    }
+    .security-notice {
+      background: rgba(239, 68, 68, 0.1);
+      border-left: 4px solid #ef4444;
+      padding: 12px 16px;
+      border-radius: 6px;
+      text-align: left;
+      font-size: 12px;
+      color: #fca5a5;
+      line-height: 1.5;
+      margin-top: 25px;
+    }
+    .footer {
+      border-top: 1px solid rgba(255, 255, 255, 0.08);
+      padding: 20px;
+      text-align: center;
+      font-size: 11px;
+      color: #64748b;
+    }
+  </style>
+</head>
+<body>
+  <div class="wrapper">
+    <div class="main-card">
+      <div class="header">
+        <h1>TAMWEEL</h1>
+        <p>Crowdfunding Community &amp; Innovation</p>
+      </div>
+
+      <div class="body-content">
+        <div class="greeting">Welcome to Tamweel.</div>
+        <p class="instruction">
+          You can verify and activate your account using either method:
+        </p>
+
+        <!-- Method A: OTP Code -->
+        <p class="instruction" style="margin-bottom: 5px; font-weight: 600; color: #cbd5e1;">
+          Your verification code:
+        </p>
+        <div class="otp-container">
+          <div class="otp-code">{{ otp_code }}</div>
+        </div>
+        <div class="expiry-badge">
+          This code expires in {{ validity_minutes|default:"10" }} minutes.
+        </div>
+
+        <!-- OR Divider -->
+        <div class="or-divider">
+          <span>OR</span>
+        </div>
+
+        <!-- Method B: Direct Activation Link -->
+        <p class="instruction" style="margin-bottom: 8px; font-weight: 600; color: #cbd5e1;">
+          Click the button below to activate your account directly:
+        </p>
+        <div>
+          <a href="{{ activation_url }}" class="btn-activate" target="_blank">
+            Activate My Account
+          </a>
+        </div>
+        <div class="expiry-badge" style="background: rgba(2, 132, 199, 0.15); border-color: rgba(2, 132, 199, 0.3); color: #38bdf8;">
+          This activation link expires in 24 hours.
+        </div>
+
+        {% if activation_url %}
+          <div class="link-fallback">
+            If the button doesn't work, copy and paste this link into your browser:<br>
+            <a href="{{ activation_url }}">{{ activation_url }}</a>
+          </div>
+        {% endif %}
+
+        <div class="security-notice">
+          <strong>🔒 Security Warning:</strong> Never share your verification code or link with anyone. If you did not register for an account on Tamweel, please disregard this email.
+        </div>
+      </div>
+
+      <div class="footer">
+        &copy; 2026 Tamweel Platform. All rights reserved.
+      </div>
+    </div>
+  </div>
+</body>
+</html>
+
+

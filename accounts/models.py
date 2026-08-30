@@ -1,6 +1,7 @@
 from django.db import models
 from django.contrib.auth.models import AbstractUser, BaseUserManager
 from django.utils.translation import gettext_lazy as _
+from django.utils import timezone
 from .validators import validate_egyptian_phone
 
 
@@ -41,6 +42,8 @@ class User(AbstractUser):
     mobile_phone = models.CharField(
         _('Mobile Phone'),
         max_length=20,
+        blank=True,
+        default='',
         validators=[validate_egyptian_phone],
         help_text=_('Egyptian phone number (e.g., 01012345678 or +201012345678)')
     )
@@ -73,7 +76,104 @@ class User(AbstractUser):
         return full_name if full_name else self.email
 
     @property
+    def is_facebook_linked(self):
+        return hasattr(self, 'facebook_account') and self.facebook_account is not None
+
+    @property
     def profile_image_url(self):
         if self.profile_picture and hasattr(self.profile_picture, 'url'):
             return self.profile_picture.url
         return None
+
+
+class FacebookSocialAccount(models.Model):
+    """
+    Links a verified Meta/Facebook identity to an existing or new Tamweel User account.
+    Enforces uniqueness on facebook_id.
+    """
+    user = models.OneToOneField(User, on_delete=models.CASCADE, related_name='facebook_account')
+    facebook_id = models.CharField(_('Facebook User ID'), max_length=100, unique=True)
+    created_at = models.DateTimeField(auto_now_add=True)
+    updated_at = models.DateTimeField(auto_now=True)
+
+    class Meta:
+        verbose_name = _('Facebook Social Account')
+        verbose_name_plural = _('Facebook Social Accounts')
+
+    def __str__(self):
+        return f"{self.user.email} (FB ID: {self.facebook_id})"
+
+
+
+class EmailOTP(models.Model):
+    """
+    Stores 6-digit numeric OTP for email verification during registration.
+    Features:
+    - Cryptographically secure 6-digit random generation
+    - 10 minutes expiration
+    - 60 seconds resend cooldown
+    - Max 5 failed attempts protection
+    """
+    user = models.ForeignKey(User, on_delete=models.CASCADE, related_name='email_otps')
+    email = models.EmailField(_('Email Address'))
+    otp_code = models.CharField(_('OTP Code'), max_length=6)
+    created_at = models.DateTimeField(auto_now_add=True)
+    expires_at = models.DateTimeField(_('Expires At'))
+    attempts = models.PositiveIntegerField(default=0, help_text=_('Number of failed verification attempts'))
+    last_sent_at = models.DateTimeField(default=timezone.now)
+
+    class Meta:
+        verbose_name = _('Email OTP')
+        verbose_name_plural = _('Email OTPs')
+        ordering = ['-created_at']
+
+    def __str__(self):
+        return f"OTP for {self.email} ({self.otp_code})"
+
+    @classmethod
+    def generate_otp_for_user(cls, user, validity_minutes=10):
+        """Generates a cryptographically secure 6-digit OTP and saves or updates the active OTP record."""
+        import secrets
+        from django.utils import timezone
+        from datetime import timedelta
+
+        # Cryptographically secure 6-digit numeric OTP (100000 - 999999)
+        code = f"{secrets.randbelow(900000) + 100000}"
+        expires = timezone.now() + timedelta(minutes=validity_minutes)
+
+        # Invalidate/delete any old OTPs for this user
+        cls.objects.filter(user=user).delete()
+
+        otp_record = cls.objects.create(
+            user=user,
+            email=user.email,
+            otp_code=code,
+            expires_at=expires,
+            attempts=0
+        )
+        return otp_record
+
+    def is_expired(self):
+        from django.utils import timezone
+        return timezone.now() > self.expires_at
+
+    def can_resend(self, cooldown_seconds=60):
+        """Checks if cooldown period has passed since last email was sent."""
+        from django.utils import timezone
+        from datetime import timedelta
+        return timezone.now() >= self.last_sent_at + timedelta(seconds=cooldown_seconds)
+
+    def remaining_resend_seconds(self, cooldown_seconds=60):
+        from django.utils import timezone
+        from datetime import timedelta
+        diff = (self.last_sent_at + timedelta(seconds=cooldown_seconds)) - timezone.now()
+        return max(0, int(diff.total_seconds()))
+
+    def increment_attempts(self):
+        self.attempts += 1
+        self.save(update_fields=['attempts'])
+
+    def is_locked(self, max_attempts=5):
+        return self.attempts >= max_attempts
+
+

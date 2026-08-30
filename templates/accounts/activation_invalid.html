@@ -1,6 +1,7 @@
 {% extends 'base.html' %}
+{% load i18n %}
 
-{% block title %}{{ error_title|default:'Activation Failed' }} | CrowdFund Egypt{% endblock %}
+{% block title %}{{ error_title|default:_("Activation Notice") }} | CrowdFund Egypt{% endblock %}
 
 {% block content %}
 <div class="container py-5">
@@ -9,21 +10,30 @@
       <div class="card border-0 shadow-lg rounded-4 p-4 p-md-5">
         <div class="mb-4">
           <span class="d-inline-flex align-items-center justify-content-center bg-danger bg-opacity-10 text-danger rounded-circle" style="width: 80px; height: 80px;">
-            <i class="fa-solid fa-circle-xmark display-5"></i>
+            <i class="fa-solid fa-circle-exclamation display-5"></i>
           </span>
         </div>
 
-        <h3 class="fw-bold mb-2">{{ error_title|default:'Activation Failed' }}</h3>
+        <h3 class="fw-bold mb-2">{{ error_title|default:_("Activation Notice") }}</h3>
         <p class="text-muted mb-4">
-          {{ error_message|default:'The activation link is invalid, expired (links expire in 24 hours), or has already been used.' }}
+          {{ error_message|default:_("This activation link is invalid, expired, or has already been used.") }}
         </p>
 
-        <div class="d-flex justify-content-center gap-2">
-          <a href="{% url 'accounts:register' %}" class="btn btn-outline-primary rounded-pill px-4">
-            Register Again
+        <div class="d-flex flex-wrap justify-content-center gap-2">
+          {% if email %}
+            <form method="POST" action="{% url 'accounts:resend_otp' %}" class="d-inline">
+              {% csrf_token %}
+              <input type="hidden" name="email" value="{{ email }}">
+              <button type="submit" class="btn btn-primary rounded-pill px-4 shadow-sm">
+                <i class="fa-solid fa-rotate-right me-1"></i> {% translate "Resend Verification Email" %}
+              </button>
+            </form>
+          {% endif %}
+          <a href="{% url 'accounts:login' %}" class="btn btn-outline-primary rounded-pill px-4">
+            <i class="fa-solid fa-arrow-right-to-bracket me-1"></i> {% translate "Go to Login" %}
           </a>
-          <a href="{% url 'home' %}" class="btn btn-primary rounded-pill px-4">
-            Home
+          <a href="{% url 'home' %}" class="btn btn-light border rounded-pill px-3">
+            {% translate "Home" %}
           </a>
         </div>
       </div>
@@ -31,3 +41,5 @@
   </div>
 </div>
 {% endblock %}
+
+

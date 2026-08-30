@@ -1,0 +1,32 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="800" height="600" viewBox="0 0 800 600">
+  <rect width="800" height="600" fill="#0f172a"/>
+  <!-- subtle wall lines -->
+  <g opacity="0.06" stroke="#334155" stroke-width="1">
+    <line x1="0" y1="100" x2="800" y2="100"/><line x1="0" y1="200" x2="800" y2="200"/><line x1="0" y1="300" x2="800" y2="300"/><line x1="0" y1="400" x2="800" y2="400"/><line x1="0" y1="500" x2="800" y2="500"/>
+  </g>
+  <!-- mural panel -->
+  <rect x="70" y="40" width="660" height="420" rx="16" fill="#1e293b" stroke="#334155" stroke-width="2"/>
+  <rect x="70" y="40" width="660" height="32" rx="16" fill="#0f172a"/>
+  <rect x="70" y="56" width="660" height="16" fill="#0f172a"/>
+  <circle cx="100" cy="60" r="6" fill="#334155"/><circle cx="120" cy="60" r="6" fill="#334155"/><circle cx="140" cy="60" r="6" fill="#334155"/>
+  <text x="400" y="62" text-anchor="middle" font-family="Inter, sans-serif" font-size="10" font-weight="700" fill="#64748b" letter-spacing="2">WALL 12 • DOWNTOWN CAIRO</text>
+  <!-- abstract waves - no humans -->
+  <path d="M90 140 Q200 90 320 140 T560 140 T740 130 L740 380 Q600 410 460 380 T260 380 T90 390 Z" fill="#f59e0b" opacity="0.95"/>
+  <path d="M90 200 Q210 170 330 210 T570 200 L570 400 Q450 430 330 400 T90 410 Z" fill="#0ea5e9" opacity="0.9"/>
+  <path d="M90 260 Q190 230 300 270 T490 260 T740 250 L740 420 Q600 450 460 420 T300 430 T90 440 Z" fill="#10b981" opacity="0.85"/>
+  <!-- overlay shapes -->
+  <circle cx="200" cy="180" r="24" fill="white" opacity="0.92"/>
+  <circle cx="600" cy="300" r="28" fill="#ef4444" opacity="0.92"/>
+  <rect x="360" y="200" width="70" height="70" rx="12" fill="white" opacity="0.12" transform="rotate(20 395 235)"/>
+  <rect x="380" y="220" width="30" height="30" rx="6" fill="white" opacity="0.9"/>
+  <!-- splatters -->
+  <circle cx="160" cy="240" r="7" fill="#fde68a"/><circle cx="540" cy="180" r="6" fill="#7dd3fc"/><circle cx="480" cy="340" r="8" fill="#6ee7b7"/><circle cx="240" cy="340" r="5" fill="#fca5a5"/>
+  <!-- bottom label -->
+  <rect x="220" y="480" width="360" height="56" rx="12" fill="white"/>
+  <text x="400" y="502" text-anchor="middle" font-family="Inter, sans-serif" font-size="15" font-weight="900" fill="#0f172a" letter-spacing="1">30 ARTISTS • 3 DAYS</text>
+  <text x="400" y="522" text-anchor="middle" font-family="Inter, sans-serif" font-size="10" font-weight="600" fill="#475569" letter-spacing="2">MURALS ONLY • NO HUMANS • NO ANIMALS</text>
+  <!-- small palette -->
+  <g transform="translate(360,550)">
+    <circle cx="0" cy="0" r="10" fill="#f59e0b" stroke="white" stroke-width="2"/><circle cx="24" cy="0" r="10" fill="#0ea5e9" stroke="white" stroke-width="2"/><circle cx="48" cy="0" r="10" fill="#ef4444" stroke="white" stroke-width="2"/><circle cx="72" cy="0" r="10" fill="#10b981" stroke="white" stroke-width="2"/>
+  </g>
+</svg>

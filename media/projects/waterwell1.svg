@@ -1,0 +1,67 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="800" height="600" viewBox="0 0 800 600">
+  <defs>
+    <linearGradient id="sky" x1="0" y1="0" x2="0" y2="1"><stop offset="0%" stop-color="#0ea5e9"/><stop offset="100%" stop-color="#bae6fd"/></linearGradient>
+    <linearGradient id="dune" x1="0" y1="0" x2="1" y2="0"><stop offset="0%" stop-color="#fde68a"/><stop offset="100%" stop-color="#f59e0b"/></linearGradient>
+    <linearGradient id="stone" x1="0" y1="0" x2="0" y2="1"><stop offset="0%" stop-color="#e7e5e4"/><stop offset="100%" stop-color="#a8a29e"/></linearGradient>
+    <radialGradient id="water" cx="50%" cy="40%" r="80%"><stop offset="0%" stop-color="#7dd3fc"/><stop offset="100%" stop-color="#0ea5e9"/></radialGradient>
+  </defs>
+  <rect width="800" height="600" fill="url(#sky)"/>
+  <!-- sun with glow -->
+  <circle cx="680" cy="90" r="48" fill="#fef3c7" opacity="0.9"/><circle cx="680" cy="90" r="32" fill="#fde68a"/>
+  <!-- distant mountains -->
+  <path d="M0 300 L140 200 L260 240 L380 180 L520 230 L640 190 L760 250 L800 270 L800 320 L0 320 Z" fill="#fef3c7" opacity="0.7" stroke="#fde68a" stroke-width="1"/>
+  <!-- dunes -->
+  <path d="M0 320 Q200 280 400 310 T800 300 L800 360 L0 360 Z" fill="url(#dune)" opacity="0.85"/>
+  <rect y="360" width="800" height="240" fill="#fef3c7"/>
+  <!-- well - improved -->
+  <g filter="url(#shadow)">
+    <!-- base -->
+    <rect x="310" y="380" width="180" height="90" rx="10" fill="url(#stone)" stroke="#57534e" stroke-width="3"/>
+    <rect x="320" y="390" width="160" height="70" rx="6" fill="#57534e" opacity="0.08"/>
+    <!-- stone texture lines -->
+    <line x1="310" y1="400" x2="490" y2="400" stroke="#78716c" stroke-width="1" opacity="0.3"/>
+    <line x1="310" y1="420" x2="490" y2="420" stroke="#78716c" stroke-width="1" opacity="0.3"/>
+    <line x1="310" y1="440" x2="490" y2="440" stroke="#78716c" stroke-width="1" opacity="0.3"/>
+    <line x1="350" y1="380" x2="350" y2="470" stroke="#78716c" stroke-width="1" opacity="0.2"/>
+    <line x1="400" y1="380" x2="400" y2="470" stroke="#78716c" stroke-width="1" opacity="0.2"/>
+    <line x1="450" y1="380" x2="450" y2="470" stroke="#78716c" stroke-width="1" opacity="0.2"/>
+  </g>
+  <!-- well opening with depth -->
+  <ellipse cx="400" cy="385" rx="70" ry="22" fill="#1c1917" stroke="#44403c" stroke-width="4"/>
+  <ellipse cx="400" cy="385" rx="55" ry="16" fill="#0c4a6e"/>
+  <ellipse cx="400" cy="385" rx="38" ry="10" fill="url(#water)" opacity="0.9"/>
+  <ellipse cx="400" cy="382" rx="20" ry="6" fill="#e0f2fe" opacity="0.5"/>
+  <!-- water highlights -->
+  <path d="M385 382 Q400 375 415 382" stroke="white" stroke-width="1.5" fill="none" opacity="0.6" stroke-linecap="round"/>
+  <!-- wooden frame -->
+  <rect x="385" y="180" width="30" height="205" rx="4" fill="#92400e" stroke="#78350f" stroke-width="2"/>
+  <rect x="340" y="170" width="120" height="22" rx="6" fill="#92400e" stroke="#78350f" stroke-width="2"/>
+  <circle cx="400" cy="182" r="16" fill="#57534e" stroke="#1c1917" stroke-width="2"/>
+  <circle cx="400" cy="182" r="6" fill="#a8a29e"/>
+  <!-- rope -->
+  <line x1="400" y1="198" x2="400" y2="385" stroke="#fef3c7" stroke-width="4" stroke-linecap="round"/>
+  <line x1="400" y1="198" x2="400" y2="385" stroke="#e7e5e4" stroke-width="2" stroke-dasharray="8 6" opacity="0.6"/>
+  <rect x="390" y="385" width="20" height="26" rx="5" fill="#44403c" stroke="#1c1917" stroke-width="2"/>
+  <!-- side pipeline -->
+  <rect x="490" y="410" width="140" height="18" rx="9" fill="#0ea5e9" stroke="#0284c7" stroke-width="2.5"/>
+  <rect x="490" y="414" width="140" height="6" rx="3" fill="#7dd3fc" opacity="0.5"/>
+  <circle cx="630" cy="419" r="12" fill="#0284c7" stroke="#0c4a6e" stroke-width="2"/>
+  <circle cx="630" cy="419" r="4" fill="#e0f2fe"/>
+  <!-- droplets with shadow -->
+  <g>
+    <path d="M650 360 Q650 348 655 348 Q660 348 660 360 Q660 372 655 378 Q650 372 650 360" fill="#0ea5e9" stroke="#0284c7" stroke-width="1"/>
+    <path d="M670 345 Q670 335 675 335 Q680 335 680 345 Q680 355 675 361 Q670 355 670 345" fill="#38bdf8" stroke="#0284c7" stroke-width="1" opacity="0.9"/>
+    <path d="M635 340 Q635 332 640 332 Q645 332 645 340 Q645 348 640 353 Q635 348 635 340" fill="#7dd3fc" stroke="#0ea5e9" stroke-width="1" opacity="0.8"/>
+  </g>
+  <!-- cactus (plant, not animal) -->
+  <g transform="translate(120,360)">
+    <rect x="15" y="40" width="14" height="50" rx="7" fill="#16a34a" stroke="#15803d" stroke-width="1.5"/>
+    <rect x="0" y="55" width="14" height="25" rx="7" fill="#16a34a" stroke="#15803d" stroke-width="1.5" transform="rotate(-20 7 67)"/>
+    <rect x="30" y="50" width="12" height="22" rx="6" fill="#16a34a" stroke="#15803d" stroke-width="1.5" transform="rotate(20 36 61)"/>
+    <circle cx="7" cy="52" r="1" fill="#14532d" opacity="0.5"/><circle cx="7" cy="62" r="1" fill="#14532d" opacity="0.5"/><circle cx="22" cy="55" r="1" fill="#14532d" opacity="0.5"/>
+  </g>
+  <!-- title -->
+  <rect x="240" y="520" width="320" height="56" rx="12" fill="white" opacity="0.92" stroke="#e7e5e4" stroke-width="1"/>
+  <text x="400" y="543" text-anchor="middle" font-family="Inter, sans-serif" font-size="22" font-weight="900" fill="#0f172a" letter-spacing="-0.5">Clean Water Wells</text>
+  <text x="400" y="562" text-anchor="middle" font-family="Inter, sans-serif" font-size="11" font-weight="600" fill="#475569" letter-spacing="1.5">SINAI • 10 WELLS • 5000 PEOPLE</text>
+</svg>
